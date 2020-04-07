@@ -1,0 +1,1640 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NetClass2</name>
+    </assembly>
+    <members>
+        <member name="M:CMDKClass.CustomTCPClient.HelperThread">
+            <summary>
+                重新连接及保持心跳线程HelperThread
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.LastErrorCode">
+            <summary>
+            最后操作的错误代码，可以用new NET2Exception(this.LastErrorCode).Message得到错误说明
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.ServerIP">
+            <summary>
+                服务器的IP
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.ServerPort">
+            <summary>
+                服务器端口
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.LocalEndPoint">
+            <summary>
+            本地IPEndPoint
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.BindingIP">
+            <summary>
+            侦听的IP地址,默认为 Any
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.BindingPort">
+            <summary>
+            侦听的端口,默认为自动
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.HartInterval">
+            <summary>
+                心跳包发送间隔, 此属性必须在调用 conn 或 connect 方法前设置才有效, 默认值为 10000(毫秒)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.Connected">
+            <summary>
+                是否已连接
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.AutoReConnect">
+            <summary>
+                是否自动重新连接,HartInterval不为0时，此值才有意义
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.ActiveTime">
+            <summary>
+                本连接的上次活动(收到过数据)的时间
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.MaxLinkSendQueueDepth">
+            <summary>
+                限制连接的发送队列大小.
+                默认限制为4096
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.BufferSize">
+            <summary>
+                单个对象的接收缓冲区大小,默认8192,最小1024,最大65535
+                太大的值并不能提高数据收发的性能
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.ReceiveMaxDataLength">
+            <summary>
+                允许客户端发送的最大数据长度（默认为20M)
+                设0时为不限制
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.Nodelay">
+            <summary>
+                开启或关闭客户端TCP_NODELAY选项,开启时，会得到更高的实时性，
+                但会降低数据收发的吞吐量，反之则降低实时性，但能获得更好的收发吞吐量.
+                默认为开启.
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.AsyncReceive">
+            <summary>
+            是否开启异步接收(默认为关闭)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPClient.MaxDegreeOfParallelism">
+             <summary>
+            异步回调的时候，最大并发执行的数量,0为不限制
+             </summary>
+        </member>
+        <member name="M:CMDKClass.CustomTCPClient.Connecting">
+            <summary>
+                不等待返回连接结果
+            </summary>
+        </member>
+        <member name="M:CMDKClass.CustomTCPClient.StartConnecting(System.Int32)">
+            <summary>
+                开始连接，并返回连接结果,如果此次操作连接失败，后台不会重连,此函数不允许在所属对象的回调函数调用。
+            </summary>
+            <returns>true 表示连接成功,false表示连接失败</returns>
+        </member>
+        <member name="M:CMDKClass.CustomTCPClient.Disconnect">
+            <summary>
+                断开连接
+            </summary>
+        </member>
+        <member name="M:CMDKClass.CustomTCPClient.Dispose(System.Boolean)">
+            <summary>
+            Dispose
+            </summary>
+        </member>
+        <member name="T:CMDKClass.CustomMulitClient">
+            <summary>
+            CustomMulitClient
+            </summary>
+        </member>
+        <member name="M:CMDKClass.CustomMulitClient.HelperThread">
+            <summary>
+                清理cookie辅助线程
+            </summary>
+        </member>
+        <member name="M:CMDKClass.CustomMulitClient.#ctor">
+            <summary>
+            CustomMulitClient
+            </summary>
+        </member>
+        <member name="M:CMDKClass.CustomMulitClient.#ctor(System.Int32)">
+            <summary>
+                初始化MulitClient对象
+            </summary>
+            <param name="receiveBufferSize">接收缓冲区大小，建议8192</param>
+        </member>
+        <member name="M:CMDKClass.CustomMulitClient.Dispose(System.Boolean)">
+            <summary>
+            Dispose
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.LastErrorCode">
+            <summary>
+            最后操作的错误代码，可以用new NET2Exception(this.LastErrorCode).Message得到错误说明
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.BindingIP">
+            <summary>
+            侦听的IP地址,默认为 Any
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.HartInterval">
+            <summary>
+                心跳包发送间隔, 默认值为 10000(毫秒)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.AutoReConnect">
+            <summary>
+                是否自动重新连接,HartInterval不为0时，此值才有意义
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.MaxLinkSendQueueDepth">
+            <summary>
+                限制连接的发送队列大小.
+                默认限制4096
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.MaxWorkThreadCount">
+            <summary>
+            设置数据收发线程池数量,默认是2,推荐为0(CPU核心数*2+1);
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.BufferSize">
+            <summary>
+                单个对象的接收缓冲区大小,默认8192,最小1024,最大65535
+                太大的值并不能提高数据收发的性能
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.ReceiveMaxDataLength">
+            <summary>
+                允许客户端发送的最大数据长度（默认为20M)
+                设0时为不限制
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.Nodelay">
+            <summary>
+                开启或关闭客户端TCP_NODELAY选项,开启时，会得到更高的实时性，
+                但会降低数据收发的吞吐量，反之则降低实时性，但能获得更好的收发吞吐量.
+                默认为开启.
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.AsyncReceive">
+            <summary>
+            是否开启异步接收(默认为关闭)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.MaxDegreeOfParallelism">
+             <summary>
+            异步回调的时候，最大并发执行的数量,0为不限制
+             </summary>
+        </member>
+        <member name="P:CMDKClass.CustomMulitClient.EstablishedCount">
+            <summary>
+            当前客户端建立连接的数量
+            </summary>
+        </member>
+        <member name="M:CMDKClass.CustomMulitClient.AddConnection(System.String,System.Int32)">
+            <summary>
+            添加一个连接
+            </summary>
+            <param name="remoteIp">远程IP</param>
+            <param name="remotePort">远程IP</param>
+            <returns>True为添加成功(或已存在)，False为添加失败</returns>
+        </member>
+        <member name="M:CMDKClass.CustomMulitClient.RemoveConnection(System.String,System.Int32)">
+            <summary>
+            移除一个连接
+            </summary>
+            <param name="remoteIp">远程IP</param>
+            <param name="remotePort">远程IP</param>
+            <returns>True为移除成功(或不存在)，False为移除失败</returns>
+        </member>
+        <member name="M:CMDKClass.CustomMulitClient.BoradCast(System.Int32,System.IO.Stream,System.Boolean)">
+            <summary>
+                广播发送
+            </summary>
+            <param name="tid">数据的ID号</param>
+            <param name="sendStream">数据流</param>
+            <param name="compress">是否压缩传输，如果对端不支持此选项，请勿开启</param>
+            <returns>成功广播的连接数</returns>
+        </member>
+        <member name="M:CMDKClass.CustomMulitClient.Broadcast(System.Int32,System.IO.Stream,System.Boolean,CMDKClass.Socket)">
+            <summary>
+                广播发送
+            </summary>
+            <param name="tid">数据的ID号</param>
+            <param name="sendStream">数据流</param>
+            <param name="compress">是否压缩传输，如果对端不支持此选项，请勿开启</param>
+            <returns>成功广播的连接数</returns>
+        </member>
+        <member name="P:CMDKClass.CustomWebTCPClient2.MaxWorkThreadCount">
+            <summary>
+            设置数据收发线程池数量,默认为CPU核心数*2+1;
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomWebTCPClient2.HartInterval">
+            <summary>
+                心跳包发送间隔,默认为16秒
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomWebTCPClient2.HartKeepCount">
+            <summary>
+                心跳包在最后一次请求完成之后，最多保持多少个心跳,默认为16次
+            </summary>
+        </member>
+        <member name="T:CMDKClass.BaseTCPServer.LinkContext">
+            <summary>
+            连接上下文对象
+            </summary>
+        </member>
+        <member name="M:CMDKClass.BaseTCPServer.#ctor">
+            <summary>
+            TCP服务器类
+            </summary>
+        </member>
+        <member name="M:CMDKClass.BaseTCPServer.#ctor(System.UInt16,System.Int32)">
+            <summary>
+            TCP服务器类
+            </summary>
+            <param name="port">监听端口</param>
+            <param name="bufferSize">单个对象的接收缓冲区大小</param>
+        </member>
+        <member name="M:CMDKClass.BaseTCPServer.#ctor(System.UInt16,System.UInt16,System.Int32)">
+            <summary>
+            TCP服务器类
+            </summary>
+            <param name="port">侦听的端口</param>
+            <param name="maxConnections">最大连接数默</param>
+            <param name="bufferSize">单个对象的接收缓冲区大小</param>
+        </member>
+        <member name="M:CMDKClass.BaseTCPServer.Listen">
+            <summary>
+            启动监听
+            </summary>
+        </member>
+        <member name="M:CMDKClass.BaseTCPServer.ShutDown">
+            <summary>
+            关闭监听
+            </summary>
+        </member>
+        <member name="M:CMDKClass.CustomTCPServer.TransmitData(System.Int32,System.IO.Stream,CMDKClass.Socket,System.Boolean)">
+            <summary>
+            发送数据
+            </summary>
+            <param name="tid">数据的ID号</param>
+            <param name="sendStream">数据流</param>
+            <param name="Context">连接上下文</param>
+            <param name="compress">是否启用内部Snappy压缩传输，如果对端不支持此选项，请勿开启</param>
+        </member>
+        <member name="M:CMDKClass.CustomTCPServer.DisconnectClient(CMDKClass.Socket)">
+            <summary>
+            关闭客户端
+            </summary>
+            <param name="Context">要关闭的客户端对象</param>
+            <returns>成功则返回true,失败返回false</returns>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.ListenPort">
+            <summary>
+            监听端口
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.BindingIP">
+            <summary>
+            监听的IP地址,默认为0.0.0.0
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.BufferSize">
+            <summary>
+            单个对象的接收缓冲区大小,默认8192,最小1024,最大65535
+            太大的值并不能提高数据收发的性能
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.ReceiveMaxDataLength">
+            <summary>
+            允许客户端发送的最大数据长度（默认为20M)
+            设0时为不限制(不推荐)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.LimitConnCount">
+            <summary>
+            限制最大连接数,默认不限制,为0时不限制
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.MaxWorkThreadCount">
+            <summary>
+            设置数据收发线程池数量,最大请勿超过(CPU核心数*2+1);
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.BlankConnectionTimeOut">
+            <summary>
+            设置每个连接最大空闲时间,超过指定时间将会被强制断开
+            默认20000（此值为兼容原来的代码）
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.LimitLinkSendPendingCount">
+            <summary>
+            设置每个连接的发送队列大小.默认限制为4096
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.EstablishedCount">
+            <summary>
+            当前客户端建立连接的数量
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.Nodelay">
+            <summary>
+            开启或关闭客户端TCP_NODELAY选项,开启时，会得到更高的实时性,默认关闭
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.AsyncReceive">
+            <summary>
+            是否开启异步接收(默认为开)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomTCPServer.MaxDegreeOfParallelism">
+             <summary>
+            异步回调的时候，最大并发执行的数量,0为不限制
+             </summary>
+        </member>
+        <member name="M:CMDKClass.BaseUDPServer.#ctor">
+            <summary>
+            UDP服务器类
+            </summary>
+        </member>
+        <member name="M:CMDKClass.BaseUDPServer.#ctor(System.UInt16,System.Int32)">
+            <summary>
+            UDP服务器类
+            </summary>
+            <param name="port">监听端口</param>
+            <param name="bufferSize">接收缓冲区大小</param>
+        </member>
+        <member name="M:CMDKClass.BaseUDPServer.Start">
+            <summary>
+            启动监听
+            </summary>
+        </member>
+        <member name="M:CMDKClass.BaseUDPServer.ShutDown">
+            <summary>
+            关闭监听
+            </summary>
+        </member>
+        <member name="M:CMDKClass.CustomUDPServer.SendData(System.String,System.UInt16,System.Int32,System.IO.Stream,System.Boolean)">
+            <summary>
+            发送数据
+            </summary>
+            <param name="remoteAddr">远程IP地址</param>
+            <param name="remotePort">远程端口</param>
+            <param name="tid">数据的ID号</param>
+            <param name="sendStream">数据流</param>
+            <param name="compress">是否启用内部Snappy压缩传输，如果对端不支持此选项，请勿开启</param>
+        </member>
+        <member name="P:CMDKClass.CustomUDPServer.ListenPort">
+            <summary>
+            监听端口
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomUDPServer.BindingIP">
+            <summary>
+            监听的IP地址,默认为0.0.0.0
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomUDPServer.BufferSize">
+            <summary>
+            接收缓冲区大小,默认8192,最小1024,最大8192
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomUDPServer.MaxWorkThreadCount">
+            <summary>
+            设置数据收发线程池数量,默认是2,推荐为0(CPU核心数*2+1);
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomUDPServer.AsyncReceive">
+            <summary>
+            是否开启异步接收(默认为开)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.CustomUDPServer.MaxDegreeOfParallelism">
+             <summary>
+            异步回调的时候，最大并发执行的数量,0为不限制
+             </summary>
+        </member>
+        <member name="T:CMDKClass.webTcpClient">
+            <summary>
+            Web与Service数据通讯客户端
+            </summary>
+        </member>
+        <member name="M:CMDKClass.webTcpClient.#ctor">
+            <summary>
+            Web与Service数据通讯客户端
+            </summary>
+        </member>
+        <member name="M:CMDKClass.webTcpClient.WebRequest(System.String,System.Int32,System.Int32,System.Object,System.Boolean,System.Boolean)">
+            <summary>
+            Web 端 TCP 请求
+            </summary>
+            <param name="ServerIP">服务器端IP</param>
+            <param name="ServerPort">服务器端端口</param>
+            <param name="cmd">命令类型</param>
+            <param name="data">发送的数据内容（必须为可系列化的数据）</param>
+            <param name="WaitReturnValue">是否需要等待服务端返回数据</param>
+            <param name="ReturnValueIsCompressed">返回的数据是否压缩</param>
+            <returns>如果不需要返回数据则返回 null</returns>
+        </member>
+        <member name="P:CMDKClass.webTcpClient.ReceiveTimeout">
+            <summary>
+            接收超时时间，默认为15000毫秒秒
+            </summary>
+        </member>
+        <member name="M:CMDKClass.webTcpClient.Dispose">
+            <summary>
+            释放此对象
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPClient.Index">
+            <summary>
+                索引号
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPClient.#ctor(System.String,System.Int32)">
+            <summary>
+                初始化TCPClient对象
+            </summary>
+            <param name="ip">服务器IP地址</param>
+            <param name="port">服务器端口</param>
+        </member>
+        <member name="M:CMDKClass.TCPClient.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>
+                初始化TCPClient对象
+            </summary>
+            <param name="ip">服务器IP地址</param>
+            <param name="port">服务器端口</param>
+            <param name="receiveBufferSize">接收缓冲区大小，建议8192</param>
+        </member>
+        <member name="M:CMDKClass.TCPClient.#ctor(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+                初始化TCPClient对象
+            </summary>
+            <param name="ip">服务器IP地址</param>
+            <param name="port">服务器端口</param>
+            <param name="receiveBufferSize">接收缓冲区大小，建议8192</param>
+            <param name="index">此实例索引，如果小于0，则数据通过 onReceived 事件接收，否则只能通过 onReceivedByIndex 事件接收</param>
+        </member>
+        <member name="M:CMDKClass.TCPClient.#ctor(System.String,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            初始化TCPClient对象
+            </summary>
+            <param name="ip">服务器IP地址</param>
+            <param name="port">服务器端口</param>
+            <param name="receiveBufferSize">接收缓冲区大小，建议8192</param>
+            <param name="index">此实例索引，如果小于0，则数据通过 onReceived 事件接收，否则只能通过 onReceivedByIndex 事件接收</param>
+            <param name="poolCount">池大小（已不再使用）</param>
+        </member>
+        <member name="T:CMDKClass.TCPClient.OnConnectedDele">
+            <summary>
+            连接事件委托
+            </summary>
+            <param name="s"></param>
+            <param name="index"></param>
+        </member>
+        <member name="E:CMDKClass.TCPClient.onConnected">
+            <summary>
+            连接成功事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPClient.onDisconnect">
+            <summary>
+            当断开连接的时候
+            </summary>
+        </member>
+        <member name="T:CMDKClass.TCPClient.deHartBetEvent">
+            <summary>
+            心跳委托
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPClient.onHartBet">
+            <summary>
+            接收到心跳数据
+            </summary>
+        </member>
+        <member name="T:CMDKClass.TCPClient.myReceiveDele">
+            <summary>
+            接收事件委托
+            </summary>
+            <param name="tid"></param>
+            <param name="s"></param>
+        </member>
+        <member name="E:CMDKClass.TCPClient.onReceived">
+            <summary>
+            接收数据事件
+            </summary>
+        </member>
+        <member name="T:CMDKClass.TCPClient.myReceiveDeleByIndex">
+            <summary>
+            接收事件委托
+            </summary>
+            <param name="tid"></param>
+            <param name="s"></param>
+            <param name="index"></param>
+        </member>
+        <member name="E:CMDKClass.TCPClient.onReceivedByIndex">
+            <summary>
+            接收数据事件（只当在 index 大于 -1 时有效,默认为-1）
+            </summary>
+        </member>
+        <member name="T:CMDKClass.TCPClient.deSendCompleteEvent">
+            <summary>
+            数据发送完成事件委托
+            </summary>
+            <param name="sender"></param>
+            <param name="tid"></param>
+            <param name="s">发送的数据对象(为发送时传入的对象)</param>
+            <param name="Successful">是否发送成功,如果发送失败，意为着OnDisconnect将会在处理完所有待发送数据后立即被回调</param>
+        </member>
+        <member name="E:CMDKClass.TCPClient.OnSendCompleteEvent">
+            <summary>
+                数据发送完成事件
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPClient.send(System.IO.Stream,System.Int32)">
+            <summary>
+            发送数据
+            </summary>
+            <param name="s">数据流</param>
+            <param name="tid">数据编号</param>
+        </member>
+        <member name="M:CMDKClass.TCPClient.SendAsync(System.IO.Stream,System.Int32,System.Boolean)">
+            <summary>
+            发送数据
+            </summary>
+            <param name="s">要发送的流</param>
+            <param name="tid">TID</param>
+            <param name="disposeStream">是否关闭流</param>
+        </member>
+        <member name="M:CMDKClass.TCPClient.SendData(System.Int32,System.IO.Stream,System.Boolean)">
+            <summary>
+            发送数据
+            </summary>
+            <param name="tid"></param>
+            <param name="sendStream"></param>
+            <param name="compress"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CMDKClass.TCPClient.Send(System.IO.Stream,System.Int32,System.Boolean)">
+            <summary>
+            发送数据
+            </summary>
+            <param name="s">要发送的流</param>
+            <param name="tid">TID</param>
+            <param name="disposeStream">是否关闭流</param>
+        </member>
+        <member name="M:CMDKClass.TCPClient.disconnect">
+            <summary>
+            断开连接
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPClient.connected">
+            <summary>
+            是否连接
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPClient.MaxThread">
+            <summary>
+            最大线程数
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPClient.SendTimeout">
+            <summary>
+            发送超时(单位为ms, 默认为 20000)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPClient.ReceiveAsync">
+            <summary>
+            是否开启异步接收(默认为关闭)
+            </summary>
+        </member>
+        <member name="T:CMDKClass.MulitClient">
+            <summary>
+            MulitClient
+            </summary>
+        </member>
+        <member name="M:CMDKClass.MulitClient.Send(System.Int32,System.String,System.Boolean,System.Int32)">
+            <summary>
+            发送数据， 若clientIndex指定为-1 ，则以广播形式发送数据到所有可用的Server上去
+            注意：自动Dispose sendStream
+            </summary>
+            <param name="tid"></param>
+            <param name="data"></param>
+            <param name="isCompress"></param>
+            <param name="clientIndex"></param>
+        </member>
+        <member name="M:CMDKClass.MulitClient.Send(System.Int32,System.String,System.Boolean,CMDKClass.Socket)">
+            <summary>
+            注意：自动Dispose sendStream
+            </summary>
+            <param name="tid"></param>
+            <param name="data"></param>
+            <param name="isCompress"></param>
+            <param name="Context"></param>
+        </member>
+        <member name="M:CMDKClass.MulitClient.Send(System.Int32,System.Object,System.Boolean,System.Int32)">
+            <summary>
+            发送数据， 若clientIndex指定为-1 ，则以广播形式发送数据到所有可用的Server上去
+            注意：自动Dispose sendStream
+            </summary>
+            <param name="tid"></param>
+            <param name="data"></param>
+            <param name="isCompress"></param>
+            <param name="clientIndex"></param>
+        </member>
+        <member name="M:CMDKClass.MulitClient.Send(System.Int32,System.Object,System.Boolean,CMDKClass.Socket)">
+            <summary>
+            注意：自动Dispose sendStream
+            </summary>
+            <param name="tid"></param>
+            <param name="data"></param>
+            <param name="isCompress"></param>
+            <param name="Context"></param>
+        </member>
+        <member name="M:CMDKClass.MulitClient.Send(System.Int32,System.IO.Stream,System.Int32)">
+            <summary>
+            发送数据， 若clientIndex指定为-1 ，则以广播形式发送数据到所有可用的Server上去
+            注意：自动Dispose sendStream
+            </summary>
+            <param name="tid"></param>
+            <param name="sendStream"></param> 
+            <param name="clientIndex"></param>
+        </member>
+        <member name="M:CMDKClass.MulitClient.Send(System.Int32,System.IO.Stream,CMDKClass.Socket)">
+            <summary>
+            注意：自动Dispose sendStream
+            </summary>
+            <param name="tid"></param>
+            <param name="sendStream"></param>
+            <param name="Context"></param>
+        </member>
+        <member name="P:CMDKClass.MulitClient.Item(System.Int32)">
+            <summary>
+            获取对应的Connection信息
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CMDKClass.MulitClient.GetIndex(System.String,System.Int32)">
+            <summary>
+            获取指定服务器的Index
+            </summary>
+            <param name="DestAddress"></param>
+            <param name="Port">端口</param>
+            <returns>-1为未找到</returns>
+        </member>
+        <member name="M:CMDKClass.MulitClient.TryParse(System.String,System.Int32,System.Int32@)">
+            <summary>
+            根据Ip获取对应的Client的下标,不存在返回-1；
+            </summary> 
+            <param name="port"></param>
+            <param name="clientIndex"></param>
+            <param name="ip"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CMDKClass.MulitClient.SendData(System.Int32,System.IO.Stream,CMDKClass.Socket)">
+            <summary>
+                发送数据
+            </summary>
+            <param name="Tid">数据的ID号</param>
+            <param name="SendStream">数据流</param>
+            <param name="Context">连接对象</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer.deConnedEvent">
+            <summary>
+            连接事件委托
+            </summary>
+            <param name="client">连接对象</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer.deReceiveEvent">
+            <summary>
+            接收数据事件委托
+            </summary>
+            <param name="tid">数据指令</param>
+            <param name="s">收到的数据流,需要用户手动Dispose</param>
+            <param name="Client">连接对象</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer.deSendCompleteEvent">
+            <summary>
+            数据发送完成事件委托
+            </summary>
+            <param name="tid">数据指令</param>
+            <param name="s">发送的数据对象(为发送时传入的对象)</param>
+            <param name="client">连接对象</param>
+            <param name="Successful">是否发送成功,如果发送失败，意为着OnDisconnect将会在处理完所有待发送数据后立即被回调</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer.deClientCountChanged">
+            <summary>
+            连接用户数量改变事件委托
+            </summary>
+            <param name="nowCount">当前连接数</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer.deDisconnectEvent">
+            <summary>
+            连接关闭事件委托
+            </summary>
+        </member>
+        <member name="T:CMDKClass.TCPServer.deHartBetEvent">
+            <summary>
+            心跳事件委托
+            </summary>
+            <param name="client"></param>
+        </member>
+        <member name="E:CMDKClass.TCPServer.connedEvent">
+            <summary>
+            连接事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer.receiveEvent">
+            <summary>
+            接收数据事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer.onClientCountChanged">
+            <summary>
+            客户连接数据改变
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer.OnSendCompleteEvent">
+            <summary>
+            数据发送完成事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer.OnDisconnectEvent">
+            <summary>
+            连接关闭事件
+            </summary>
+        </member>
+        <member name="T:CMDKClass.TCPServer.deSendError">
+            <summary>
+            发送错误事件委托
+            </summary>
+            <param name="tid"></param>
+        </member>
+        <member name="E:CMDKClass.TCPServer.onHartBet">
+            <summary>
+            心跳事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer.onSendError">
+            <summary>
+            发送数据失败
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPServer.#ctor">
+            <summary>
+            TCP服务器类
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPServer.#ctor(System.UInt16,System.Int32)">
+            <summary>
+            TCP服务器类
+            </summary>
+            <param name="port">监听端口</param>
+            <param name="bufferSize">单个对象的接收缓冲区大小</param>
+        </member>
+        <member name="M:CMDKClass.TCPServer.#ctor(System.UInt16,System.Int32,System.Int32)">
+            <summary>
+            TCP服务器类
+            </summary>
+            <param name="port">侦听的端口</param>
+            <param name="maxConnections">最大连接数默</param>
+            <param name="bufferSize">单个对象的接收缓冲区大小</param>
+        </member>
+        <member name="M:CMDKClass.TCPServer.DisconnectClient(CMDKClass.Socket)">
+            <summary>
+            关闭客户端
+            </summary>
+            <param name="client">要关闭的客户端对象</param>
+            <returns>成功则返回true,失败返回false</returns>
+        </member>
+        <member name="M:CMDKClass.TCPServer.Send(System.Int32,System.IO.Stream,CMDKClass.Socket,System.Boolean)">
+            <summary>
+            发送数据
+            </summary>
+            <param name="tid">数据的ID号</param>
+            <param name="stream">数据流</param>
+            <param name="client">客户端插座</param>
+            <param name="isdispose">发送完毕后, 是否释放流</param>
+        </member>
+        <member name="P:CMDKClass.TCPServer.ReceiveAsync">
+            <summary>
+            设置或者获取一个值, 是否开启异步接收, 默认为 true
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPServer.BindingIp">
+            <summary>
+            侦听的IP地址,默认为 Any
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPServer.SendAsync">
+            <summary>
+            获取或设置一个值, 是否采用异步发送, 默认为 false
+            </summary> 
+        </member>
+        <member name="P:CMDKClass.TCPServer.Capacity">
+            <summary>
+            缓存区数量
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPServer.ArgsCountSendAllValid">
+            <summary>
+            加入的 Args 总数量
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPServer.MaxThread">
+            <summary>
+            Max Thread for receiver
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPServer.UnLimitIp">
+            <summary>
+            Limit the remote client ip address of allow connect to this port.
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPServer.EnabledFirewall">
+            <summary>
+            是否开启防火墙功能
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPServer.SetPolicy(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            设置防火墙策略
+            </summary>
+            <param name="bvCheckInterval">所有非法请求的检测间隔时间</param>
+            <param name="bvErrorRequestTimes">单位时间间隔内允许的错误请求次数</param>
+            <param name="bvBlankConnections">单位时间间隔内空连接（被强行断开）建立的次数</param>
+            <param name="bvRequestMaxTimes">单位时间间隔内可以合法请求的最大次数</param>
+            <param name="bvReceiveDataMaxLength">允许接受的最大客户端数据长度</param>
+            <param name="bvBlankTimeOut">空连接超时长度</param>
+            <param name="blackTime">黑名单自动删除的时间（单位为小时）</param>
+        </member>
+        <member name="M:CMDKClass.TCPServer.SetWhiteList(System.String,System.Boolean)">
+            <summary>
+            Set white list
+            </summary>
+            <param name="ip">IP Address</param>
+            <param name="isAdd">If is add</param>
+        </member>
+        <member name="M:CMDKClass.TCPServer.SetBlackList(System.String,System.Boolean)">
+            <summary>
+            Set black list
+            </summary>
+            <param name="ip">IP Address</param>
+            <param name="isAdd">If is add</param>
+        </member>
+        <member name="P:CMDKClass.TCPServer.WhiteList">
+            <summary>
+            白名单
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPServer.BlackList">
+            <summary>
+            黑名单
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPServer.SendTimeout">
+            <summary>
+            发送超时（单位为秒, 默认30）
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPServer.init">
+            <summary>
+            初始化此服务器端
+            </summary>
+        </member>
+        <member name="P:CMDKClass.TCPServer.bindingIP">
+            <summary>
+            侦听的IP地址,默认为 Any
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPServer.setWhiteList(System.String,System.Boolean)">
+            <summary>
+            Set white list
+            </summary>
+            <param name="ip">IP Address</param>
+            <param name="isAdd">If is add</param>
+        </member>
+        <member name="M:CMDKClass.TCPServer.setBlackList(System.String,System.Boolean)">
+            <summary>
+            Set black list
+            </summary>
+            <param name="ip">IP Address</param>
+            <param name="isAdd">If is add</param>
+        </member>
+        <member name="T:CMDKClass.webTcpServer">
+            <summary>
+            提供给IIS连接使用的TCP SERVER类
+            </summary>
+        </member>
+        <member name="T:CMDKClass.webTcpServer.myEventReceived">
+            <summary>
+            接收事件委托
+            </summary>
+            <param name="connSock"></param>
+            <param name="data"></param>
+            <param name="portIndex"></param>
+        </member>
+        <member name="M:CMDKClass.webTcpServer.#ctor(System.Int32)">
+            <summary>
+            提供给IIS连接使用的TCP SERVER类
+            </summary>
+            <param name="index">Index</param>
+        </member>
+        <member name="M:CMDKClass.webTcpServer.listen">
+            <summary>
+            开始侦听
+            </summary>
+        </member>
+        <member name="M:CMDKClass.webTcpServer.send(CMDKClass.Socket,System.Int32,System.Object,System.Boolean)">
+            <summary>
+            发送数据
+            </summary>
+            <param name="client"></param>
+            <param name="cmd"></param>
+            <param name="data"></param>
+            <param name="compress"></param>
+        </member>
+        <member name="M:CMDKClass.webTcpServer.Dispose">
+            <summary>
+            关闭此对象
+            </summary>
+        </member>
+        <member name="P:CMDKClass.webTcpServer.Index">
+            <summary>
+            索引
+            </summary>
+        </member>
+        <member name="E:CMDKClass.webTcpServer.eventReceived">
+            <summary>
+            接收事件委托
+            </summary>
+        </member>
+        <member name="P:CMDKClass.webTcpServer.packetSize">
+            <summary>
+            缓冲区大小
+            </summary>
+        </member>
+        <member name="P:CMDKClass.webTcpServer.AsyncReceive">
+            <summary>
+            是否开启异步接收(默认为开)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.webTcpServer.MaxThread">
+            <summary>
+            允许的最大线程
+            </summary>
+        </member>
+        <member name="P:CMDKClass.webTcpServer.BufferSize">
+            <summary>
+            缓冲区大小
+            </summary>
+        </member>
+        <member name="P:CMDKClass.webTcpServer.serverPort">
+            <summary>
+            侦听端口
+            </summary>
+        </member>
+        <member name="P:CMDKClass.webTcpServer.Debug">
+            <summary>
+            是否开启调试模式
+            </summary>
+        </member>
+        <member name="T:CMDKClass.MulitClient2">
+            <summary>
+            MulitClient2
+            </summary>
+        </member>
+        <member name="T:CMDKClass.MulitClient2.deConnectedEvent">
+            <summary>
+            连接事件委托
+            </summary>
+            <param name="Context">连接对象</param>
+            <param name="Successful">如果Successful==false,OnDisconnected不会被回调</param>
+        </member>
+        <member name="T:CMDKClass.MulitClient2.deDisconnectedEvent">
+            <summary>
+            断开事件委托
+            </summary>
+            <param name="Context">连接对象</param>
+        </member>
+        <member name="T:CMDKClass.MulitClient2.deHartBeatEvent">
+            <summary>
+            心跳委托
+            </summary>
+            <param name="Context">连接对象</param>
+        </member>
+        <member name="T:CMDKClass.MulitClient2.deReceiveEvent">
+            <summary>
+            接收事件委托
+            </summary>
+            <param name="tid">数据指令</param>
+            <param name="data">数据流,需要用户调用dispose()</param>
+            <param name="Context">连接对象</param>
+        </member>
+        <member name="T:CMDKClass.MulitClient2.deSendCompleteEvent">
+            <summary>
+            数据发送完成事件委托
+            </summary>
+            <param name="tid">数据指令</param>
+            <param name="data">发送的数据对象(为发送时传入的对象)</param>
+            <param name="Successful">是否发送成功,如果发送失败，意为着OnDisconnect将会在处理完所有待发送数据后立即被回调</param>
+            <param name="Context">连接对象</param>
+        </member>
+        <member name="E:CMDKClass.MulitClient2.OnConnectedEvent">
+            <summary>
+            连接成功事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.MulitClient2.OnDisconnectEvent">
+            <summary>
+            当断开连接的时候
+            </summary>
+        </member>
+        <member name="E:CMDKClass.MulitClient2.OnHartBeat">
+            <summary>
+            接收到心跳数据
+            </summary>
+        </member>
+        <member name="E:CMDKClass.MulitClient2.OnReceiveEvent">
+            <summary>
+            接收数据事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.MulitClient2.OnSendCompleteEvent">
+            <summary>
+                数据发送完成事件
+            </summary>
+        </member>
+        <member name="M:CMDKClass.MulitClient2.SendData(System.Int32,System.IO.Stream,CMDKClass.Socket,System.Boolean)">
+            <summary>
+                发送数据
+            </summary>
+            <param name="tid">数据的ID号</param>
+            <param name="sendStream">数据流</param>
+            <param name="context">连接对象</param>
+            <param name="snappyCompress">是否压缩传输，如果对端不支持此选项，请勿开启</param>
+        </member>
+        <member name="T:CMDKClass.TCPClient2Exception">
+            <summary>
+            异常处理类
+            </summary>
+        </member>
+        <member name="T:CMDKClass.TCPClient2">
+            <summary>
+            TCPClient2
+            </summary>
+        </member>
+        <member name="T:CMDKClass.TCPClient2.deConnectedEvent">
+            <summary>
+            连接事件委托
+            </summary>
+            <param name="sender">本对象</param>
+        </member>
+        <member name="T:CMDKClass.TCPClient2.deDisconnectedEvent">
+            <summary>
+            断开事件委托
+            </summary>
+            <param name="sender">本对象</param>
+        </member>
+        <member name="T:CMDKClass.TCPClient2.deHartBetEvent">
+            <summary>
+            心跳委托
+            </summary>
+            <param name="sender">本对象</param>
+        </member>
+        <member name="T:CMDKClass.TCPClient2.deReceiveEvent">
+            <summary>
+            接收事件委托
+            </summary>
+            <param name="sender">本对象</param>
+            <param name="tid">数据指令</param>
+            <param name="data">数据流</param>
+        </member>
+        <member name="T:CMDKClass.TCPClient2.deSendCompleteEvent">
+            <summary>
+            数据发送完成事件委托
+            </summary>
+            <param name="sender">本对象</param>
+            <param name="tid">数据指令</param>
+            <param name="data">发送的数据对象(为发送时传入的对象)</param>
+            <param name="successful">是否发送成功,如果发送失败，意为着OnDisconnect将会在处理完所有待发送数据后立即被回调</param>
+        </member>
+        <member name="E:CMDKClass.TCPClient2.OnConnectedEvent">
+            <summary>
+            连接成功事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPClient2.OnDisconnectEvent">
+            <summary>
+            当断开连接的时候
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPClient2.OnHartBet">
+            <summary>
+            接收到心跳数据
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPClient2.OnReceiveEvent">
+            <summary>
+            接收数据事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPClient2.OnSendCompleteEvent">
+            <summary>
+                数据发送完成事件
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPClient2.#ctor">
+            <summary>
+            TCPClient2
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPClient2.#ctor(System.String,System.Int32)">
+            <summary>
+                初始化TCPClient对象
+            </summary>
+            <param name="remoteIp">服务器IP地址</param>
+            <param name="remotePort">服务器端口</param>
+        </member>
+        <member name="M:CMDKClass.TCPClient2.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>
+                初始化TCPClient对象
+            </summary>
+            <param name="remoteIp">服务器IP地址</param>
+            <param name="remotePort">服务器端口</param>
+            <param name="receiveBufferSize">接收缓冲区大小，建议8192</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer2.deConnectEvent">
+            <summary>
+            连接事件委托
+            </summary>
+            <param name="client"></param>
+            <returns>是否Accept,如果返回false,此连接将会被拒绝，OnDiconnect将不会被调用</returns>
+        </member>
+        <member name="T:CMDKClass.TCPServer2.deReceiveEvent">
+            <summary>
+            接收数据事件委托
+            </summary>
+            <param name="tid">数据指令</param>
+            <param name="s">收到的数据流,需要用户手动Dispose</param>
+            <param name="client">连接对象</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer2.deSendCompleteEvent">
+            <summary>
+            数据发送完成事件委托
+            </summary>
+            <param name="tid">数据指令</param>
+            <param name="s">发送的数据对象(为发送时传入的对象)</param>
+            <param name="client">连接对象</param>
+            <param name="Successful">是否发送成功,如果发送失败，意为着OnDisconnect将会在处理完所有待发送数据后立即被回调</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer2.deDisconnectEvent">
+            <summary>
+            连接关闭事件委托
+            </summary>
+            <param name="client">连接对象</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer2.deClientCountChanged">
+            <summary>
+            连接用户数量改变事件委托
+            </summary>
+            <param name="establishedCount">当前连接数</param>
+        </member>
+        <member name="T:CMDKClass.TCPServer2.deHartBetEvent">
+            <summary>
+            心跳事件委托
+            </summary>
+            <param name="client">连接对象</param>
+        </member>
+        <member name="E:CMDKClass.TCPServer2.OnConnectEvent">
+            <summary>
+            连接事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer2.OnReceiveEvent">
+            <summary>
+            接收数据事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer2.OnSendCompleteEvent">
+            <summary>
+            数据发送完成事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer2.OnDisconnectEvent">
+            <summary>
+            连接关闭事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer2.OnClientCountChanged">
+            <summary>
+            客户连接数据改变
+            </summary>
+        </member>
+        <member name="E:CMDKClass.TCPServer2.onHartBet">
+            <summary>
+            心跳事件
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPServer2.#ctor">
+            <summary>
+            TCP服务器类
+            </summary>
+        </member>
+        <member name="M:CMDKClass.TCPServer2.#ctor(System.UInt16,System.Int32)">
+            <summary>
+            TCP服务器类
+            </summary>
+            <param name="port">监听端口</param>
+            <param name="bufferSize">单个对象的接收缓冲区大小</param>
+        </member>
+        <member name="M:CMDKClass.TCPServer2.#ctor(System.UInt16,System.UInt16,System.Int32)">
+            <summary>
+            TCP服务器类
+            </summary>
+            <param name="port">侦听的端口</param>
+            <param name="maxConnections">最大连接数默</param>
+            <param name="bufferSize">单个对象的接收缓冲区大小</param>
+        </member>
+        <member name="F:CMDKClass.DebugClass._GlobalDebug">
+            <summary>
+            是否开始全局Debug,本属性为True时会覆盖掉对象实例的Debug属性
+            </summary>
+        </member>
+        <member name="F:CMDKClass.DebugClass._GlobalDebug2System">
+            <summary>
+            是否开始全局Debug2System,本属性为True时会覆盖掉对象实例的Debug2System属性
+            </summary>
+        </member>
+        <member name="P:CMDKClass.DebugClass.GlobalDebug2System">
+            <summary>
+            将日志重定向到系统日志队列
+            </summary>
+        </member>
+        <member name="P:CMDKClass.DebugClass.Debug">
+            <summary>
+            开启常规调试信息(连接,断开)
+            </summary>
+        </member>
+        <member name="P:CMDKClass.DebugClass.Debug2System">
+            <summary>
+            将调试信息写入系统，可使用DebugView工具查看
+            </summary>
+        </member>
+        <member name="P:CMDKClass.DebugClass.UserData">
+            <summary>
+            供用户挂载对象的字段
+            </summary>
+        </member>
+        <member name="P:CMDKClass.DebugClass.Tag">
+            <summary>
+            供用户使用的Tag
+            </summary>
+        </member>
+        <member name="P:CMDKClass.NetDebugClass.GlobalDataDebug">
+            <summary>
+            是否开启网络层的数据包DEBUG,当此值为True时会覆盖掉对象实例的DataDebug属性。
+            </summary>
+        </member>
+        <member name="P:CMDKClass.NetDebugClass.GlobalHeartBeatDebug">
+            <summary>
+            是否开启网络层的心跳包DEBUG,当此值为True时会覆盖掉对象实例的DebugHeartBeat属性。
+            </summary>
+        </member>
+        <member name="P:CMDKClass.NetDebugClass.GlobalDebugDataDetail">
+            <summary>
+            是否开启网络层的数据包DEBUG,当此值为True时会覆盖掉对象实例的DebugDataDetai属性。
+            </summary>
+        </member>
+        <member name="P:CMDKClass.NetDebugClass.DebugData">
+            <summary>
+            开始数据包调试信息
+            </summary>
+        </member>
+        <member name="P:CMDKClass.NetDebugClass.DebugHeartBeat">
+            <summary>
+            开始数据包调试信息
+            </summary>
+        </member>
+        <member name="P:CMDKClass.NetDebugClass.DebugDataDetail">
+            <summary>
+            开始数据包调试信息
+            </summary>
+        </member>
+        <member name="T:CMDKClass.Socket">
+            <summary>
+            不允许调用本类的Dispose,Close方法
+            </summary>
+        </member>
+        <member name="F:CMDKClass.Socket.RecvPack">
+            <summary>
+            当前正在接收的数据包
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.Handle">
+            <summary>
+            对应底层的连接句柄
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.Gc">
+            <summary>
+            给本类添加引用计数，以免被GC回收
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.Left">
+            <summary>
+            当前接收数据包剩余字节
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.LastActiveTime">
+            <summary>
+            本连接最后活动时间
+            </summary>
+        </member>
+        <member name="F:CMDKClass.Socket.LocalPort">
+            <summary>
+            本地端口
+            </summary>
+        </member>
+        <member name="F:CMDKClass.Socket.LocalIp">
+            <summary>
+            本地IP地址
+            </summary>
+        </member>
+        <member name="F:CMDKClass.Socket._RemotePort">
+            <summary>
+            远程端口
+            </summary>
+        </member>
+        <member name="F:CMDKClass.Socket.RemoteIp">
+            <summary>
+            远程IP地址
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.LastErrorCode">
+            <summary>
+            获取最后操作的错误代码,可以用new NET2Exception(this.LastErrorCode).Message得到错误说明
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.LocalEndPoint">
+            <summary>
+            本地IPEndPoint
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.RemoteEndPoint">
+            <summary>
+            远程IPEndPoint
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.UserData">
+            <summary>
+            供用户挂载对象的字段
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.Tag">
+            <summary>
+            供用户使用的Tag
+            </summary>
+        </member>
+        <member name="P:CMDKClass.Socket.Parent">
+            <summary>
+            父对象
+            </summary>
+        </member>
+        <member name="T:CMDKClass.UDPServer2.deReceiveEvent">
+            <summary>
+            接收数据事件委托
+            </summary>
+            <param name="remoteAddr">来源IP</param>
+            <param name="port">来源端口</param>
+            <param name="tid">数据指令</param>
+            <param name="s">收到的数据流,需要用户手动Dispose</param>
+            <param name="Client">连接对象</param>
+        </member>
+        <member name="T:CMDKClass.UDPServer2.deSendCompleteEvent">
+            <summary>
+            数据发送完成事件委托
+            </summary>
+            <param name="remoteAddr">来源IP</param>
+            <param name="port">来源端口</param>
+            <param name="tid">数据指令</param>
+            <param name="s">发送的数据对象(为发送时传入的对象)</param>
+            <param name="Successful">是否发送成功,如果发送失败，意为着OnDisconnect将会在处理完所有待发送数据后立即被回调</param>
+        </member>
+        <member name="E:CMDKClass.UDPServer2.OnReceiveEvent">
+            <summary>
+            接收数据事件
+            </summary>
+        </member>
+        <member name="E:CMDKClass.UDPServer2.OnSendCompleteEvent">
+            <summary>
+            数据发送完成事件
+            </summary>
+        </member>
+        <member name="M:CMDKClass.UDPServer2.#ctor">
+            <summary>
+            UDP服务器类
+            </summary>
+        </member>
+        <member name="M:CMDKClass.UDPServer2.#ctor(System.UInt16,System.Int32)">
+            <summary>
+            UDP服务器类
+            </summary>
+            <param name="port">监听端口</param>
+            <param name="bufferSize">单个对象的接收缓冲区大小</param>
+        </member>
+        <member name="M:CMDKClass.WebTCPClient2.WebRequest(System.String,System.Int32,System.Int32,System.IO.Stream,System.Int32@,System.IO.Stream@,System.Int32,System.Boolean,System.Int32@,System.Boolean)">
+            <summary>
+                TCP短连接请求,本函数支持并发访问
+            </summary>
+            <param name="remoteIp">远程地址</param>
+            <param name="remotePort">远程端口</param>
+            <param name="tid">数据指令</param>
+            <param name="sendStream">需要发送的数据</param>
+            <param name="retTid">服务器返回的指令</param>
+            <param name="retStream">服务器返回的数据</param>
+            <param name="millisecondsWaitTimeout">本次操作的最大等待时间,最小值500</param>
+            <param name="waitReturnValue">是否等待数据回馈</param>
+            <param name="errorCode">本次请求失败的错误代码,可以用new NET2Exception(this.LastErrorCode).Message得到错误说明</param>
+            <param name="compress">是否压缩传输，如果对端不支持此选项，请勿开启</param>
+            <returns>成功返回true,失败则返回false,失败原因由ErrorCode指出</returns>
+        </member>
+        <member name="T:NetClass2.RBTCPClient.DeConnectedEvent">
+            <summary>
+            连接事件委托
+            </summary>
+            <param name="sender">本对象</param>
+        </member>
+        <member name="T:NetClass2.RBTCPClient.DeDisconnectedEvent">
+            <summary>
+            断开事件委托
+            </summary>
+            <param name="sender">本对象</param>
+        </member>
+        <member name="T:NetClass2.RBTCPClient.DeReceiveEvent">
+            <summary>
+            接收事件委托
+            </summary>
+            <param name="sender">本对象</param>
+            <param name="tid">数据指令</param>
+            <param name="data">数据流</param>
+        </member>
+        <member name="T:NetClass2.RBTCPClient.DeSendCompleteEvent">
+            <summary>
+            数据发送完成事件委托
+            </summary>
+            <param name="sender">本对象</param>
+            <param name="tid">数据指令</param>
+            <param name="data">发送的数据对象(为发送时传入的对象)</param>
+            <param name="successful">是否发送成功,如果发送失败，意为着OnDisconnect将会在处理完所有待发送数据后立即被回调</param>
+        </member>
+        <member name="E:NetClass2.RBTCPClient.OnConnectedEvent">
+            <summary>
+            连接成功事件
+            </summary>
+        </member>
+        <member name="E:NetClass2.RBTCPClient.OnDisconnectEvent">
+            <summary>
+            当断开连接的时候
+            </summary>
+        </member>
+        <member name="E:NetClass2.RBTCPClient.OnReceiveEvent">
+            <summary>
+            接收数据事件
+            </summary>
+        </member>
+        <member name="E:NetClass2.RBTCPClient.OnSendCompleteEvent">
+            <summary>
+                数据发送完成事件
+            </summary>
+        </member>
+        <member name="M:NetClass2.RBTCPClient.#ctor">
+            <summary>
+            TCPClient2
+            </summary>
+        </member>
+        <member name="M:NetClass2.RBTCPClient.#ctor(System.String,System.Int32)">
+            <summary>
+                初始化TCPClient对象
+            </summary>
+            <param name="remoteIp">服务器IP地址</param>
+            <param name="remotePort">服务器端口</param>
+        </member>
+        <member name="M:NetClass2.RBTCPClient.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>
+                初始化TCPClient对象
+            </summary>
+            <param name="remoteIp">服务器IP地址</param>
+            <param name="remotePort">服务器端口</param>
+            <param name="receiveBufferSize">接收缓冲区大小，建议8192</param>
+        </member>
+        <member name="T:NetClass2.RBTCPServer.DeConnectEvent">
+            <summary>
+            连接事件委托
+            </summary>
+            <param name="client"></param>
+            <returns>是否Accept,如果返回false,此连接将会被拒绝，OnDiconnect将不会被调用</returns>
+        </member>
+        <member name="T:NetClass2.RBTCPServer.DeReceiveEvent">
+            <summary>
+            接收数据事件委托
+            </summary>
+            <param name="tid">数据指令</param>
+            <param name="s">收到的数据流,需要用户手动Dispose</param>
+            <param name="client">连接对象</param>
+        </member>
+        <member name="T:NetClass2.RBTCPServer.DeSendCompleteEvent">
+            <summary>
+            数据发送完成事件委托
+            </summary>
+            <param name="tid">数据指令</param>
+            <param name="s">发送的数据对象(为发送时传入的对象)</param>
+            <param name="client">连接对象</param>
+            <param name="successful">是否发送成功,如果发送失败，意为着OnDisconnect将会在处理完所有待发送数据后立即被回调</param>
+        </member>
+        <member name="T:NetClass2.RBTCPServer.DeDisconnectEvent">
+            <summary>
+            连接关闭事件委托
+            </summary>
+            <param name="client">连接对象</param>
+        </member>
+        <member name="T:NetClass2.RBTCPServer.DeClientCountChanged">
+            <summary>
+            连接用户数量改变事件委托
+            </summary>
+            <param name="establishedCount">当前连接数</param>
+        </member>
+        <member name="E:NetClass2.RBTCPServer.OnConnectEvent">
+            <summary>
+            连接事件
+            </summary>
+        </member>
+        <member name="E:NetClass2.RBTCPServer.OnReceiveEvent">
+            <summary>
+            接收数据事件
+            </summary>
+        </member>
+        <member name="E:NetClass2.RBTCPServer.OnSendCompleteEvent">
+            <summary>
+            数据发送完成事件
+            </summary>
+        </member>
+        <member name="E:NetClass2.RBTCPServer.OnDisconnectEvent">
+            <summary>
+            连接关闭事件
+            </summary>
+        </member>
+        <member name="E:NetClass2.RBTCPServer.OnClientCountChanged">
+            <summary>
+            客户连接数据改变
+            </summary>
+        </member>
+        <member name="M:NetClass2.RBTCPServer.#ctor">
+            <summary>
+            TCP服务器类
+            </summary>
+        </member>
+        <member name="M:NetClass2.RBTCPServer.#ctor(System.UInt16,System.Int32)">
+            <summary>
+            TCP服务器类
+            </summary>
+            <param name="port">监听端口</param>
+            <param name="bufferSize">单个对象的接收缓冲区大小</param>
+        </member>
+        <member name="M:NetClass2.RBTCPServer.#ctor(System.UInt16,System.UInt16,System.Int32)">
+            <summary>
+            TCP服务器类
+            </summary>
+            <param name="port">侦听的端口</param>
+            <param name="maxConnections">最大连接数默</param>
+            <param name="bufferSize">单个对象的接收缓冲区大小</param>
+        </member>
+        <member name="M:NetClass2.RBTCPServer.TransmitData(System.Int32,System.IO.Stream,CMDKClass.Socket,System.Boolean)">
+            <summary>
+            发送数据
+            </summary>
+            <param name="tid">数据的ID号</param>
+            <param name="sendStream">数据流</param>
+            <param name="Context">连接上下文</param>
+            <param name="compress">是否启用内部Snappy压缩传输，如果对端不支持此选项，请勿开启</param>
+        </member>
+    </members>
+</doc>

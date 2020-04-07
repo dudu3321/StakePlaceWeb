@@ -1,0 +1,106 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj": {}
+  },
+  "projects": {
+    "C:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj",
+        "projectName": "stake-place-web",
+        "projectPath": "C:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj",
+        "packagesPath": "C:\\Users\\kervin.tsai\\.nuget\\packages\\",
+        "outputPath": "C:\\Kervin\\project\\stake-place-web\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Kervin\\project\\stake-place-web\\NuGet.Config",
+          "C:\\Users\\kervin.tsai\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Kervin\\project\\stake-place-web\\References": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "CommunalClass": {
+              "target": "Package",
+              "version": "[1.0.0, )"
+            },
+            "DataStruct": {
+              "target": "Package",
+              "version": "[1.0.0, )"
+            },
+            "MessagePack": {
+              "target": "Package",
+              "version": "[1.7.3.4, )"
+            },
+            "Microsoft.AspNetCore.SpaServices.Extensions": {
+              "target": "Package",
+              "version": "[3.1.2, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.10.2, )"
+            },
+            "NetClass2": {
+              "target": "Package",
+              "version": "[1.0.0, )"
+            },
+            "Snappy.NET": {
+              "target": "Package",
+              "version": "[1.1.1.8, )"
+            },
+            "StakePlaceEntities": {
+              "target": "Package",
+              "version": "[1.0.0, )"
+            },
+            "System.Configuration.ConfigurationManager": {
+              "target": "Package",
+              "version": "[4.7.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.200\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

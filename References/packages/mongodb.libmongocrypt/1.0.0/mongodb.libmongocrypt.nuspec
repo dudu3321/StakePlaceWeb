@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>MongoDB.Libmongocrypt</id>
+    <version>1.0.0</version>
+    <authors>markbenvenuto,vincentkam,dmitry_lukyanov,rstam</authors>
+    <owners>markbenvenuto,vincentkam,dmitry_lukyanov,rstam</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="file">License.txt</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <projectUrl>http://www.mongodb.org/display/DOCS/CSharp+Language+Center</projectUrl>
+    <iconUrl>http://jobs.mongodb.org/files/logos/889002/889002.png</iconUrl>
+    <description>Libmongocrypt wrapper for the .NET driver.</description>
+    <copyright>Copyright © 2019–present MongoDB Inc.</copyright>
+    <tags>mongodb mongo nosql</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.2" />
+      <group targetFramework=".NETStandard1.5">
+        <dependency id="NETStandard.Library" version="1.6.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <contentFiles>
+      <files include="any/net452/mongocrypt.dll" buildAction="Content" />
+      <files include="any/netstandard1.5/mongocrypt.dll" buildAction="Content" />
+      <files include="any/net452/mongocrypt.pdb" buildAction="Content" />
+      <files include="any/netstandard1.5/mongocrypt.pdb" buildAction="Content" />
+    </contentFiles>
+  </metadata>
+</package>

@@ -1,0 +1,16 @@
+.content{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.container{
+    width: 20%;
+    min-width: 380px;
+}
+
+.container-box{
+    width: 100%;
+    text-align: center;
+    margin: 16px 0 16px 0;
+}
