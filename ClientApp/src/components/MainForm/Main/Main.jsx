@@ -2,7 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import TabContent from '../TabContent/TabContent';
 import TabFilter from '../TabFilter/TabFilter';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DndProvider, DragSource, DropTarget } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import { Tabs } from 'antd';
 import './Main.styles.scss';
 
@@ -18,25 +19,12 @@ class Main extends PureComponent {
     };
   }
 
-  onDragEnd = (result) => {
-    const { source, destination } = result;
-    if (!destination) {
-      return;
-    }
-
-    let arr = Array.from(this.state.panes);
-    const [remove] = arr.splice(source.index, 1);
-    arr.splice(destination.index, 0, remove);
-    this.setState({
-      panes: arr,
-    });
-  };
-
-  onChange = (activeKey) => {
-    this.setState({ activeKey });
-  };
-  onEdit = (targetKey, action) => {
+  eventHandler = (targetKey, action) => {
     this[action](targetKey);
+  };
+
+  change = (activeKey) => {
+    this.setState({ activeKey });
   };
 
   add = () => {
@@ -67,55 +55,162 @@ class Main extends PureComponent {
     }
     this.setState({ panes, activeKey });
   };
-
   render() {
     return (
-      <div className="Content">
-        <DragDropContext onDragEnd={this.onDragEnd}>
-          <Droppable droppableId="droppable-1">
-            {(provided) => (
-              <Tabs
-                type="editable-card"
-                onEdit={this.onEdit}
-                activeKey={this.state.activeKey}
-                onChange={this.onChange}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
-                <TabPaneList panes={this.state.panes}></TabPaneList>
-                {provided.placeholder}
-              </Tabs>
-            )}
-          </Droppable>
-        </DragDropContext>
+      <div class="Content">
+        <DraggableTabs
+          handler={this.eventHandler}
+          activeKey={this.state.activeKey}
+        >
+          {this.state.panes.map((pane) => {
+            return (
+              <TabPane tab={pane.title} key={pane.key}>
+                <TabFilter></TabFilter>
+                <TabContent></TabContent>
+              </TabPane>
+            );
+          })}
+        </DraggableTabs>
       </div>
     );
   }
 }
 
-const TabPaneList = ({ panes }) => {
-  return panes.map((pane, index) => (
-    <TabPaneItem key={pane.key} index={index} pane={pane}></TabPaneItem>
-  ));
+// Drag & Drop node
+class TabNode extends React.Component {
+  render() {
+    const { connectDragSource, connectDropTarget, children } = this.props;
+
+    return connectDragSource(connectDropTarget(children));
+  }
+}
+
+const cardTarget = {
+  drop(props, monitor) {
+    const dragKey = monitor.getItem().index;
+    const hoverKey = props.index;
+
+    if (dragKey === hoverKey) {
+      return;
+    }
+
+    props.moveTabNode(dragKey, hoverKey);
+    monitor.getItem().index = hoverKey;
+  },
 };
 
-const TabPaneItem = (pane, index) => {
-  return (
-    <Draggable draggableId={pane.key} index={index}>
-      {(provided) => (
-        <TabPane
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          tab={pane.title}
-        >
-          <TabFilter></TabFilter>
-          <TabContent></TabContent>
-        </TabPane>
-      )}
-    </Draggable>
-  );
+const cardSource = {
+  beginDrag(props) {
+    return {
+      id: props.id,
+      index: props.index,
+    };
+  },
 };
+
+const WrapTabNode = DropTarget('DND_NODE', cardTarget, (connect) => ({
+  connectDropTarget: connect.dropTarget(),
+}))(
+  DragSource('DND_NODE', cardSource, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging(),
+  }))(TabNode)
+);
+
+class DraggableTabs extends React.Component {
+  state = {
+    order: [],
+  };
+
+  onEdit = (targetKey, action) => {
+    const { handler } = this.props;
+    handler(targetKey, action);
+  };
+
+  onChange = (activeKey) => {
+    this.onEdit(activeKey, 'change');
+  };
+
+  moveTabNode = (dragKey, hoverKey) => {
+    const newOrder = this.state.order.slice();
+    const { children } = this.props;
+
+    React.Children.forEach(children, (c) => {
+      if (newOrder.indexOf(c.key) === -1) {
+        newOrder.push(c.key);
+      }
+    });
+
+    const dragIndex = newOrder.indexOf(dragKey);
+    const hoverIndex = newOrder.indexOf(hoverKey);
+
+    newOrder.splice(dragIndex, 1);
+    newOrder.splice(hoverIndex, 0, dragKey);
+
+    this.setState({
+      order: newOrder,
+    });
+  };
+
+  renderTabBar = (props, DefaultTabBar) => (
+    <DefaultTabBar {...props}>
+      {(node) => (
+        <WrapTabNode
+          key={node.key}
+          index={node.key}
+          moveTabNode={this.moveTabNode}
+        >
+          {node}
+        </WrapTabNode>
+      )}
+    </DefaultTabBar>
+  );
+
+  render() {
+    const { order } = this.state;
+    const { children } = this.props;
+
+    const tabs = [];
+    React.Children.forEach(children, (c) => {
+      tabs.push(c);
+    });
+
+    const orderTabs = tabs.slice().sort((a, b) => {
+      const orderA = order.indexOf(a.key);
+      const orderB = order.indexOf(b.key);
+
+      if (orderA !== -1 && orderB !== -1) {
+        return orderA - orderB;
+      }
+      if (orderA !== -1) {
+        return -1;
+      }
+      if (orderB !== -1) {
+        return 1;
+      }
+
+      const ia = tabs.indexOf(a);
+      const ib = tabs.indexOf(b);
+
+      return ia - ib;
+    });
+
+    return (
+      <DndProvider backend={HTML5Backend}>
+        <Tabs
+          type="editable-card"
+          onEdit={this.onEdit}
+          onChange={this.onChange}
+          activeKey={this.state.activeKey}
+          renderTabBar={this.renderTabBar}
+          {...this.props}
+        >
+          {orderTabs}
+        </Tabs>
+      </DndProvider>
+    );
+  }
+}
 
 Main.propTypes = {
   // bla: PropTypes.string,
