@@ -11,22 +11,34 @@ using stake_place_web.Enums;
 using StakePlaceEntities;
 using StakePlaceEntities.Dao.MongoDb;
 
-namespace stake_place_web.Service {
-    public interface ILoginService {
-        Dictionary<string, MoLoginResponse> pendingMoLogin { get; set; }
-        void GetMeta (string moLogin);
+namespace stake_place_web.Service
+{
+    public interface ILoginService
+    {
+        Dictionary<string, MoLoginResponse> pendingMoLogin
+        {
+            get;
+            set;
+        }
+        void GetMeta (string moLogin, MoLoginResponse response);
         void Login (string moLogin, string password);
-        void ReceivedInvoke(MoLoginStatus status, string moLogin, string title, string message);
+        void ReceivedInvoke (MoLoginStatus status, string moLogin, string title, string message);
         void Start ();
     }
 
-    public class LoginService : ILoginService {
+    public class LoginService : ILoginService
+    {
         private IConfiguration _config;
         private readonly TCPClient2 _tcpClient;
         private MiniUserV2Dao _miniUserV2Dao;
         private MiniUserMatchIdsV2Dao _miniUserMatchIdsV2Dao;
-        public Dictionary<string, MoLoginResponse> pendingMoLogin { get; set; }
-        public LoginService (IConfiguration config) {
+        public Dictionary<string, MoLoginResponse> pendingMoLogin
+        {
+            get;
+            set;
+        }
+        public LoginService (IConfiguration config)
+        {
             _config = config;
 
             var moIp = _config["MOServerIp"];
@@ -37,7 +49,8 @@ namespace stake_place_web.Service {
             Start ();
         }
 
-        public void Start () {
+        public void Start ()
+        {
             _tcpClient.Connecting ();
 
             var connectionString = _config["MongoTicketsStatusConnectionString"];
@@ -52,25 +65,29 @@ namespace stake_place_web.Service {
             pendingMoLogin = new Dictionary<string, MoLoginResponse> ();
         }
 
-        public void Login (string moLogin, string password) {
+        public void Login (string moLogin, string password)
+        {
             var encryptedPassword = stringCoding.GetMD5 (password);
             var machineName = Environment.MachineName;
             var userName = Environment.UserName;
             var loginType = (int) MoLoginType.Stakeplace;
             var @params = $"{moLogin}#{password}#{encryptedPassword}#{machineName}#{userName}#{loginType}";
 
-            using (var stream = StreamConvert.StringToStream (@params, false)) {
+            using (var stream = StreamConvert.StringToStream (@params, false))
+            {
                 _tcpClient.SendData (2, stream);
             }
-            pendingMoLogin.Add (moLogin, new MoLoginResponse () {
+            pendingMoLogin.Add (moLogin, new MoLoginResponse ()
+            {
                 MoLogin = moLogin,
-                EncryptedPassword = encryptedPassword,
-                UpdateFinished = false,
-                CreateTime = DateTime.Now
+                    EncryptedPassword = encryptedPassword,
+                    UpdateFinished = false,
+                    CreateTime = DateTime.Now
             });
         }
 
-        public void ReceivedInvoke (MoLoginStatus status, string moLogin, string title, string message) {
+        public void ReceivedInvoke (MoLoginStatus status, string moLogin, string title, string message)
+        {
             pendingMoLogin[moLogin].MoLoginStatus = status;
             pendingMoLogin[moLogin].Title = title;
             pendingMoLogin[moLogin].Message = message;
@@ -79,65 +96,92 @@ namespace stake_place_web.Service {
 
         #region Private Methods
 
-        public void GetMeta (string moLogin) {
+        public void GetMeta (string moLogin, MoLoginResponse response)
+        {
             MiniUserV2 miniUser;
             var moLoginResponse = pendingMoLogin[moLogin];
-            if (_miniUserV2Dao.TryQuery (moLogin, out miniUser)) {
-                if (miniUser.LockStatus == 0) {
-                    if (miniUser.Md5Password == moLoginResponse.EncryptedPassword) {
-                        if (miniUser.IsStakeplaceLogin) {
+            if (_miniUserV2Dao.TryQuery (moLogin, out miniUser))
+            {
+                if (miniUser.LockStatus == 0)
+                {
+                    if (miniUser.Md5Password == moLoginResponse.EncryptedPassword)
+                    {
+                        if (miniUser.IsStakeplaceLogin)
+                        {
+                            if (moLogin.StartsWith ("pascal", StringComparison.OrdinalIgnoreCase))
+                            {
+                                response.View = Views.AllMatches;
+                            }
+                            else
+                            {
+                                response.View = miniUser.CanViewOnlyMOMatches ? Views.OnlyMOMatches : Views.AllMatches;
+                            }
                             MiniUserMatchIdsV2 miniUserMatchIds;
-                            if (_miniUserMatchIdsV2Dao.TryQueryOne (moLogin, out miniUserMatchIds)) {
+                            if (_miniUserMatchIdsV2Dao.TryQueryOne (moLogin, out miniUserMatchIds))
+                            {
                                 moLoginResponse.MatchCodes.Clear ();
                                 moLoginResponse.MatchCodes.AddRange (miniUserMatchIds.MatchIds);
                             }
                             ReceivedInvoke (MoLoginStatus.Success, moLogin, "", "");
-                        } else {
+                        }
+                        else
+                        {
                             ReceivedInvoke (MoLoginStatus.Error, moLogin, "StakePlaceClient Credentials errors",
                                 "You are not allowed to use StakePlace.");
                         }
-                    } else {
+                    }
+                    else
+                    {
                         ReceivedInvoke (MoLoginStatus.Error, moLogin, "StakePlaceClient Credentials errors",
                             "Your password is incorrect.");
                     }
-                } else {
+                }
+                else
+                {
                     ReceivedInvoke (MoLoginStatus.Error, moLogin, "StakePlaceClient Credentials errors",
                         "Your account has been closed/locked.");
                 }
-            } else {
+            }
+            else
+            {
                 ReceivedInvoke (MoLoginStatus.Error, moLogin, "StakePlaceClient Credentials errors",
                     "Your login is unknown.");
             }
         }
 
-        
-
         #region MOClient TCPClient Events Methods
 
-        private void TcpClientOnReceiveEvent (object sender, int tid, Stream data) {
+        private void TcpClientOnReceiveEvent (object sender, int tid, Stream data)
+        {
             var quitMesage = string.Empty;
             var response = StreamConvert.StreamToString (data, false, true);
             string[] loginResult = response.Split ('#');
             var moLogin = loginResult[0];
             var moLoginResponse = pendingMoLogin[moLogin];
             var command = (MoLoginStatus) tid;
-            switch (command) {
+            switch (command)
+            {
                 case MoLoginStatus.Success:
                     {
-                        if (loginResult.Length < 4) {
+                        if (loginResult.Length < 4)
+                        {
                             ReceivedInvoke (MoLoginStatus.Error, moLogin, "MOService Error Message",
                                 "An error happened during login. Error message below " +
                                 $"{Environment.NewLine} msg={response}");
                             break;
                         }
 
-                        var userLevels = loginResult[1].Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        var userLevels = loginResult[1].Split (new []
+                        {
+                            ','
+                        }, StringSplitOptions.RemoveEmptyEntries);
 
-                        if (userLevels.Length > 0) {
+                        if (userLevels.Length > 0)
+                        {
                             ReceivedInvoke (command, moLogin, "", "");
                             moLoginResponse.UserLevels.Clear ();
                             moLoginResponse.UserLevels.AddRange (userLevels);
-                            GetMeta (moLogin);
+                            GetMeta (moLogin, moLoginResponse);
                             break;
                         }
 

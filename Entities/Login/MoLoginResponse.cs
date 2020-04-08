@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using stake_place_web.Enums;
+using StakePlaceEntities;
+
 namespace stake_place_web.Entities.Login {
     public class MoLoginResponse {
         public string MoLogin { get; set; }
@@ -10,7 +12,8 @@ namespace stake_place_web.Entities.Login {
         public string Message { get; set; }
         public List<int> MatchCodes { get; set; }
         public List<string> UserLevels { get; set; }
+        public Views View { get; set; }
         public bool UpdateFinished { get; set; }
-        public DateTime CreateTime {get;set;}
+        public DateTime CreateTime { get; set; }
     }
 }

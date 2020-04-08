@@ -57,7 +57,7 @@ class Main extends PureComponent {
   };
   render() {
     return (
-      <div class="Content">
+      <div className="Content">
         <DraggableTabs
           handler={this.eventHandler}
           activeKey={this.state.activeKey}

@@ -36,17 +36,18 @@ class Login extends PureComponent {
     })
       .then(response => response.json())
       .then(result => {
-        this.setState({ moLoginResponse: result });
-        if (this.state.moLoginResponse.moLoginStatus == 1) {
-          this.setLoginCookie();
+        if (result.moLoginStatus == 1) {
+          this.setLoginCookie(result);
         } 
+        this.setState({ moLoginResponse: result });
       });
   };
 
-  setLoginCookie = () => {
+  setLoginCookie = (result) => {
     const { cookies } = this.props;
     cookies.set('moLogin', this.state.rememberMe ? this.state.moLogin : '', { path: '/' });
     cookies.set('password', this.state.rememberMe ? this.state.password : '', { path: '/' });
+    cookies.set('view', result.view, { path: '/' });
   };
 
   cancelOnClick = () => {
@@ -97,7 +98,7 @@ class Login extends PureComponent {
     return (
       <div className="content">
         <div className="container">
-          <div className="container-box">{errorAlert}</div>
+          {errorAlert}
           <div className="container-box">
             <Input
               id="moLogin"
