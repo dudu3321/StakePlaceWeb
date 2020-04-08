@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react'
 import PropTypes from 'prop-types';
 import { Dropdown, Input } from 'antd';
-import { withCookies, Cookies } from 'react-cookie';
 //import { Test } from './Filter.styles';
 
 const TabFilter = (props) => {
+
+  const [filtersData, setFiltersData] = useState(await fetch('Filter'));
+
   return (
     <div>
-
     </div>
   );
 };
@@ -20,4 +21,4 @@ TabFilter.defaultProps = {
   // bla: 'test',
 };
 
-export default withCookies(TabFilter);
+export default TabFilter;

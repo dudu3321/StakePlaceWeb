@@ -5,7 +5,7 @@ using StakePlaceEntities;
 
 namespace stake_place_web.Entities.Filter {
 
-    internal abstract class BaseLine {
+    public abstract class BaseLine {
         public string Id { get; protected set; }
         public string Description { get; protected set; }
 
@@ -14,7 +14,7 @@ namespace stake_place_web.Entities.Filter {
         }
     }
 
-    internal abstract class BaseLine<T> : BaseLine {
+    public abstract class BaseLine<T> : BaseLine {
         public T Value { get; protected set; }
 
         protected BaseLine (T value, string description) : base (description) {
@@ -24,7 +24,7 @@ namespace stake_place_web.Entities.Filter {
 
     }
 
-    internal class ViewLine : BaseLine<Views> {
+    public class ViewLine : BaseLine<Views> {
         public ViewLine (Views value, string description) : base (value, description) { }
 
         public static List<ViewLine> GetAllLines => new List<ViewLine> {
@@ -37,7 +37,7 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    internal class MarketLine : BaseLine<Markets> {
+    public class MarketLine : BaseLine<Markets> {
         public MarketLine (Markets value, string description) : base (value, description) { }
 
         public static List<MarketLine> GetAllLines => new List<MarketLine> {
@@ -49,7 +49,7 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    internal class RecordLine : BaseLine<Records> {
+    public class RecordLine : BaseLine<Records> {
         public RecordLine (Records value, string description) : base (value, description) { }
 
         public static List<RecordLine> GetAllLines => new List<RecordLine> {
@@ -69,7 +69,7 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    internal class SportLine : BaseLine<Sports> {
+    public class SportLine : BaseLine<Sports> {
         public SportLine (Sports value, string description) : base (value, description) { }
 
         public static List<SportLine> GetAllLines => new List<SportLine> {
@@ -126,7 +126,7 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    internal class TransactionLine : BaseLine<Transactions> {
+    public class TransactionLine : BaseLine<Transactions> {
         public TransactionLine (Transactions value, string description) : base (value, description) { }
 
         public static List<TransactionLine> GetAllLines => new List<TransactionLine> {
@@ -138,7 +138,7 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    internal class TicketLine : BaseLine<Tickets> {
+    public class TicketLine : BaseLine<Tickets> {
         public TicketLine (Tickets value, string description) : base (value, description) { }
 
         public static List<TicketLine> GetAllLines => new List<TicketLine> {
@@ -148,7 +148,7 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    internal class StatusLine : BaseLine<Status> {
+    public class StatusLine : BaseLine<Status> {
         public StatusLine (Status value, string description) : base (value, description) { }
 
         public static List<StatusLine> GetAllLines => new List<StatusLine> {
@@ -160,7 +160,7 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    internal class VipLine : BaseLine<int> {
+    public class VipLine : BaseLine<int> {
         public VipLine (int value, string description) : base (value, description) { }
 
         public static List<VipLine> GetAllLines => new List<VipLine> {
@@ -186,7 +186,7 @@ namespace stake_place_web.Entities.Filter {
         }
     }
 
-    internal class SpecialLine : BaseLine<int> {
+    public class SpecialLine : BaseLine<int> {
         public SpecialLine (int value, string description) : base (value, description) { }
 
         public static List<SpecialLine> GetAllLines => new List<SpecialLine> {
@@ -215,7 +215,7 @@ namespace stake_place_web.Entities.Filter {
     }
 
     [Obsolete ("", true)]
-    internal enum TicketRequests {
+    public enum TicketRequests {
         OneThousand,
         OneThousandFiveHundreds,
         TwoThousands,
@@ -224,7 +224,7 @@ namespace stake_place_web.Entities.Filter {
     }
 
     [Obsolete ("", true)]
-    internal class TicketRequestsLine : BaseLine<TicketRequests> {
+    public class TicketRequestsLine : BaseLine<TicketRequests> {
         private TicketRequestsLine (TicketRequests value, string description) : base (value, description) { }
 
         public static List<TicketRequestsLine> GetAllLines => new List<TicketRequestsLine> {
