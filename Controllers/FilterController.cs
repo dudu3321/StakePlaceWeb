@@ -10,7 +10,7 @@ namespace stake_place_web.Controllers
     public class FilterController
     {
         private readonly IFilterService _filtersService;
-        FilterController(IFilterService filtersService){
+        public FilterController(IFilterService filtersService){
             _filtersService = filtersService;
         }
         
