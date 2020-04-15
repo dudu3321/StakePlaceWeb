@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Select, Input } from 'antd';
+import { Select, Input, Checkbox } from 'antd';
 import './TabFilter.styles.scss';
 const { Option } = Select;
 
@@ -11,7 +11,8 @@ class TabFilter extends PureComponent {
       selectedFilters: {
         Amount: '',
         Ip: '',
-        Account: ''
+        Account: '',
+        scrollEnd: false
       }
     }
     this.getFiltersData();
@@ -54,6 +55,12 @@ class TabFilter extends PureComponent {
     this.setState({ selectedFilters: newState });
   }
 
+  checkboxHandleChange = () => {
+    let newState = Object.assign({}, this.state.selectedFilters);
+    newState.scrollEnd = !newState.scrollEnd;
+    this.setState({ selectedFilters: newState });
+  }
+
   render() {
     const { selectedFilters } = this.state;
     return (
@@ -70,6 +77,7 @@ class TabFilter extends PureComponent {
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_3" value={selectedFilters.specialLines ? selectedFilters.specialLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('specialLines')}</Select>
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.ticketLines ? selectedFilters.ticketLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('ticketLines')}</Select>
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.statusLines ? selectedFilters.statusLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('statusLines')}</Select>
+        <Checkbox onChange={this.checkboxHandleChange} value={this.state.selectedFilters.scrollEnd}>Scroll to end</Checkbox>
       </div >
     )
   }
