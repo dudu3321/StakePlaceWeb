@@ -1,65 +1,78 @@
-import React, { Component, PureComponent } from 'react'
-import { connect } from 'react-redux'
+import React, { PureComponent } from 'react'
 import { Select, Input } from 'antd';
+import './TabFilter.styles.scss';
 const { Option } = Select;
 
 class TabFilter extends PureComponent {
-
-  
   constructor(props) {
     super(props);
     this.state = {
-      selectedFilters: {},
-      filtersData: this.getFiltersData()
+      filtersData: {},
+      selectedFilters: {
+        Amount: '',
+        Ip: '',
+        Account: ''
+      }
     }
+    this.getFiltersData();
   }
 
-  getFiltersData = async () => {
-    await fetch('Filter')
+  getFiltersData = () => {
+    fetch('Filter')
       .then(response => response.json())
       .then(result => {
         this.setState({ filtersData: result });
         if (result) {
-          for (var element in result) {
-            this.state.selectedFilters[element] = result[element][0].value;
-          };
+          for (let key in result) {
+            let newState = Object.assign({}, this.state.selectedFilters);
+            newState[key] = result[key][0];
+            this.setState({ selectedFilters: newState });
+          }
         }
       });;
   }
 
   getSelectOptions = (key) => {
-    if (this.state.filtersData[key]) {
-      return this.state.filtersData[key].map(i => <Option value={i.value}>{i.description}</Option>);
+    const { filtersData } = this.state;
+    if (filtersData[key]) {
+      return filtersData[key].map(i => <Option className="options" key={i.value} id={key}>{i.description}</Option>);
     }
     return;
   }
 
-  onchangeHandle = () => {
+  selectHandleChange = (eventVal, eventElement) => {
+    const { id, value } = eventElement;
+    let newState = Object.assign({}, this.state.selectedFilters);
+    newState[id] = this.state.filtersData[id].find(i => i.value == value);
+    this.setState({ selectedFilters: newState });
   }
+
+  inputHandleChange = (event) => {
+    const { value, id } = event.target;
+    let newState = Object.assign({}, this.state.selectedFilters);
+    newState[id] = value;
+    this.setState({ selectedFilters: newState });
+  }
+
   render() {
+    const { selectedFilters } = this.state;
     return (
       < div >
-        <Select defaultValue={this.state.selectedFilters.viewLines} onchangeHandle={this.onchangeHandle}>{this.getSelectOptions('viewLines')}</Select>
-        <Select defaultValue={this.state.selectedFilters.marketLines} onchangeHandle={this.onchangeHandle}>{this.getSelectOptions('marketLines')}</Select>
-        <Select defaultValue={this.state.selectedFilters.recordLines} onchangeHandle={this.onchangeHandle}>{this.getSelectOptions('recordLines')}</Select>
-        <Select defaultValue={this.state.selectedFilters.sportLines} onchangeHandle={this.onchangeHandle}>{this.getSelectOptions('sportLines')}</Select>
-        <Select defaultValue={this.state.selectedFilters.transactionLines} onchangeHandle={this.onchangeHandle}>{this.getSelectOptions('transactionLines')}</Select>
-        <Select defaultValue={this.state.selectedFilters.vipLines} onchangeHandle={this.onchangeHandle}>{this.getSelectOptions('vipLines')}</Select>
-        <Select defaultValue={this.state.selectedFilters.specialLines} onchangeHandle={this.onchangeHandle}>{this.getSelectOptions('specialLines')}</Select>
-        <Select defaultValue={this.state.selectedFilters.ticketLines} onchangeHandle={this.onchangeHandle}>{this.getSelectOptions('ticketLines')}</Select>
-        <Select defaultValue={this.state.selectedFilters.statusLines} onchangeHandle={this.onchangeHandle}>{this.getSelectOptions('statusLines')}</Select>
+        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.viewLines ? selectedFilters.viewLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('viewLines')}</Select>
+        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.marketLines ? selectedFilters.marketLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('marketLines')}</Select>
+        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.recordLines ? selectedFilters.recordLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('recordLines')}</Select>
+        <Input className="input" id="Amount" placeholder="Bet >=" value={this.state.selectedFilters.Amount} onChange={this.inputHandleChange}></Input>
+        <Input className="input" id="Account" placeholder="Account" value={this.state.selectedFilters.Account} onChange={this.inputHandleChange}></Input>
+        <Input className="input" id="Ip" placeholder="IP" value={this.state.selectedFilters.Ip} onChange={this.inputHandleChange}></Input>
+        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.sportLines ? selectedFilters.sportLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('sportLines')}</Select>
+        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_2" value={selectedFilters.transactionLines ? selectedFilters.transactionLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('transactionLines')}</Select>
+        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_4" value={selectedFilters.vipLines ? selectedFilters.vipLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('vipLines')}</Select>
+        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_3" value={selectedFilters.specialLines ? selectedFilters.specialLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('specialLines')}</Select>
+        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.ticketLines ? selectedFilters.ticketLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('ticketLines')}</Select>
+        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.statusLines ? selectedFilters.statusLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('statusLines')}</Select>
       </div >
-
     )
   }
 }
 
-const mapStateToProps = (state) => ({
-
-})
-
-const mapDispatchToProps = {
-
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TabFilter)
+export default TabFilter

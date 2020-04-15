@@ -1,1 +1,28 @@
 /* your css code */
+importand_padding{
+    margin-right: 8px !important;
+}
+
+.selector_1 {
+    @extend importand_padding;
+    width: 7%;
+}
+
+.options_1 {
+    min-width: 150px;
+}
+.options_2 {
+    min-width: 250px;
+}
+.options_3 {
+    min-width: 300px;
+}
+.options_4 { 
+    min-width: 450px;
+}
+
+.input {
+    width: 150px !important;
+    margin-right: 8px !important;
+}
+

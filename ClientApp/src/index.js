@@ -5,13 +5,21 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { CookiesProvider } from 'react-cookie';
+import filterApp from './redux/reducers/main/index';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
+let store = createStore(filterApp);
+
 ReactDOM.render(
-  <CookiesProvider>
-    <App />
-  </CookiesProvider>,
+  <Provider store={store}>
+    <CookiesProvider>
+      <App />
+    </CookiesProvider>
+  </Provider>,
   rootElement
 );
 
