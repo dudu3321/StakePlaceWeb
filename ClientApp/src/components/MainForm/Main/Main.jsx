@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import TabContent from '../TabContent/TabContent';
 import TabFilter from '../TabFilter/TabFilter';
+import TabInfo from '../TabInfo/TabInfo';
 import { DndProvider, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { Tabs } from 'antd';
@@ -17,6 +18,10 @@ class Main extends PureComponent {
       newTabIndex: 1,
       activeKey: '1',
     };
+  }
+
+  filterEventHandler = (filterState) => {
+      
   }
 
   eventHandler = (targetKey, action) => {
@@ -55,9 +60,10 @@ class Main extends PureComponent {
     }
     this.setState({ panes, activeKey });
   };
+
   render() {
     return (
-      <div className="Content">
+      <div className="tab_content">
         <DraggableTabs
           handler={this.eventHandler}
           activeKey={this.state.activeKey}
@@ -65,13 +71,20 @@ class Main extends PureComponent {
           {this.state.panes.map((pane) => {
             return (
               <TabPane tab={pane.title} key={pane.key}>
-                <TabFilter></TabFilter>
-                <TabContent></TabContent>
+                <div className="tab_content_control">
+                  <TabFilter></TabFilter>
+                </div>
+                <div className="tab_content_control">
+                  <TabInfo></TabInfo>
+                </div>
+                <div className="tab_content_control">
+                  <TabContent></TabContent>
+                </div>
               </TabPane>
             );
           })}
         </DraggableTabs>
-      </div>
+      </div >
     );
   }
 }
