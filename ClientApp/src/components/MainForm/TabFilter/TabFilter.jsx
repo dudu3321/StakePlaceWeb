@@ -19,6 +19,7 @@ class TabFilter extends PureComponent {
   }
 
   getFiltersData = () => {
+    const { updateEventHandler } = this.props;
     fetch('Filter')
       .then(response => response.json())
       .then(result => {
@@ -31,6 +32,7 @@ class TabFilter extends PureComponent {
           }
         }
       });;
+    updateEventHandler(this.state);
   }
 
   getSelectOptions = (key) => {
@@ -43,26 +45,35 @@ class TabFilter extends PureComponent {
 
   selectHandleChange = (eventVal, eventElement) => {
     const { id, value } = eventElement;
+    const { updateEventHandler } = this.props;
     let newState = Object.assign({}, this.state.selectedFilters);
     newState[id] = this.state.filtersData[id].find(i => i.value == value);
     this.setState({ selectedFilters: newState });
+    updateEventHandler(newState);
   }
 
   inputHandleChange = (event) => {
     const { value, id } = event.target;
+    const { updateEventHandler } = this.props;
     let newState = Object.assign({}, this.state.selectedFilters);
+
     newState[id] = value;
     this.setState({ selectedFilters: newState });
+    updateEventHandler(newState);
   }
 
   checkboxHandleChange = () => {
+    const { updateEventHandler } = this.props;
     let newState = Object.assign({}, this.state.selectedFilters);
+
     newState.scrollEnd = !newState.scrollEnd;
     this.setState({ selectedFilters: newState });
+    updateEventHandler(newState);
   }
 
   render() {
     const { selectedFilters } = this.state;
+
     return (
       < div >
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.viewLines ? selectedFilters.viewLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('viewLines')}</Select>

@@ -17,12 +17,19 @@ class Main extends PureComponent {
       panes: [{ title: 'Tab #1', key: '1' }],
       newTabIndex: 1,
       activeKey: '1',
+      selectedFilters: {},
+      latePending: ''
     };
   }
 
   filterEventHandler = (filterState) => {
-      
+    this.setState({ selectedFilters: filterState });
+  };
+
+  contentEventHandler = (latePending) => {
+    this.setState({ latePending: latePending})
   }
+
 
   eventHandler = (targetKey, action) => {
     this[action](targetKey);
@@ -72,19 +79,19 @@ class Main extends PureComponent {
             return (
               <TabPane tab={pane.title} key={pane.key}>
                 <div className="tab_content_control">
-                  <TabFilter></TabFilter>
+                  <TabFilter updateEventHandler={this.filterEventHandler}></TabFilter>
                 </div>
                 <div className="tab_content_control">
-                  <TabInfo></TabInfo>
+                  <TabInfo latePending={this.state.latePending}></TabInfo>
                 </div>
                 <div className="tab_content_control">
-                  <TabContent></TabContent>
+                  <TabContent selectedFilters={this.state.selectedFilters} contentEventHandler={this.contentEventHandler}></TabContent>
                 </div>
               </TabPane>
             );
           })}
         </DraggableTabs>
-      </div >
+      </div>
     );
   }
 }

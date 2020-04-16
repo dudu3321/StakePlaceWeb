@@ -33,8 +33,9 @@ namespace stake_place_web
             });
 
             services.AddScoped<ILoginService, LoginService> ();
-
             services.AddScoped<IFilterService, FilterService> ();
+            services.AddScoped<IUserService, UserService> ();
+            services.AddScoped<ITicketService, TicketService> ();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

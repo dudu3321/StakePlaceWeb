@@ -48,6 +48,7 @@ class Login extends PureComponent {
     cookies.set('moLogin', this.state.rememberMe ? this.state.moLogin : '', { path: '/' });
     cookies.set('password', this.state.rememberMe ? this.state.password : '', { path: '/' });
     cookies.set('view', result.view, { path: '/' });
+    cookies.set('userLevels', result.view, { path: '/' });
   };
 
   cancelOnClick = () => {

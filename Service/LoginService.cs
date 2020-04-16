@@ -55,8 +55,8 @@ namespace stake_place_web.Service
 
             var connectionString = _config["MongoTicketsStatusConnectionString"];
             var mongoDbId = $"{Environment.UserName}@{Environment.MachineName}@{Helpers.GetLocalIPAddress()}";
-
-            var APPLICATION_NAME = _config["MongoTicketsStatusConnectionString"];
+            var APPLICATION_NAME = _config["ApplicationName"];
+            
             _miniUserV2Dao = MiniUserV2Dao.CreateInstance (connectionString,
                 $"{mongoDbId}@MiniUserV2Dao@MOClient@{APPLICATION_NAME}");
             _miniUserMatchIdsV2Dao = MiniUserMatchIdsV2Dao.CreateInstance (connectionString,

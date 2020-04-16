@@ -1,8 +1,6 @@
-using System;
 using Microsoft.AspNetCore.Mvc;
 using stake_place_web.Entities.Filter;
 using stake_place_web.Service;
-using StakePlaceEntities;
 namespace stake_place_web.Controllers
 {
     [ApiController]

@@ -4,12 +4,12 @@ import './TabInfo.styles.scss';
 export default class TabInfo extends PureComponent {
   constructor(props) {
     super(props)
-
+    const {LatePending} = this.props;
     this.state = {
       Added: 0,
       Stocks: 0,
       TradeIns: 0,
-      LatePending: '',
+      LatePending: LatePending,
       UpdateTime: ''
     }
   }
