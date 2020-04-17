@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
-import './TabInfo.styles.scss';
+import './Info.styles.scss';
 
-export default class TabInfo extends PureComponent {
+export default class Info extends PureComponent {
   constructor(props) {
     super(props)
     const {LatePending} = this.props;

@@ -1,13 +1,13 @@
-import { SET_FILTERS } from '../../actions/main';
+import { SET_FILTERS_DATA } from '../../actions/main';
 
 
 const initialState = {
   filtersData: {}
 };
 
-const filters = (state = initialState, action) => {
+const filtersData = (state = initialState, action) => {
   switch (action.type) {
-    case SET_FILTERS:
+    case SET_FILTERS_DATA:
       return Object.assign({}, state, {filtersData: action.filtersData});
     default:
       return state;
@@ -15,4 +15,4 @@ const filters = (state = initialState, action) => {
 };
 
 
-export default filters;
+export default filtersData;

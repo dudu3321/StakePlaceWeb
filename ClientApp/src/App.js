@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Login from './components/Login/Login';
-import Main from './components/MainForm/Main/Main';
+import Main from './container/Main';
 import { CookiesProvider } from 'react-cookie';
 
 import './custom.css';
