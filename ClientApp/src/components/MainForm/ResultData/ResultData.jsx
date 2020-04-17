@@ -17,7 +17,7 @@ class ResultData extends PureComponent {
   }
 
   getResultData = () => {
-    if (Object.keys(this.state.selectedFilters).length == 0) return;
+    if (Object.keys(this.state.selectedFilters).length === 0) return;
 
     const { contentEventHandler } = this.props;
     fetch('ticket', {

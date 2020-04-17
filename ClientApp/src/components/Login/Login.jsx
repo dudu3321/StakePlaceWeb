@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
-import { Input, Button, Checkbox, Alert, Spin } from 'antd';
+import { Input, Button, Checkbox, Alert } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { PropTypes, instanceOf } from 'prop-types';
+import { instanceOf } from 'prop-types';
 import { withCookies, Cookies } from 'react-cookie';
 import './Login.styles.scss';
 import { Redirect } from 'react-router-dom';
@@ -24,7 +24,7 @@ class Login extends PureComponent {
 
   loginOnClick = async () => {
     
-    const response1 = await fetch('login', {
+    await fetch('login', {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
@@ -36,7 +36,7 @@ class Login extends PureComponent {
     })
       .then(response => response.json())
       .then(result => {
-        if (result.moLoginStatus == 1) {
+        if (result.moLoginStatus === 1) {
           this.setLoginCookie(result);
         } 
         this.setState({ moLoginResponse: result });
@@ -70,6 +70,8 @@ class Login extends PureComponent {
       case 'rememberMe':
         this.setState({ rememberMe: event.target.checked });
         break;
+      default: 
+        break;
     }
   };
 
@@ -79,7 +81,7 @@ class Login extends PureComponent {
       return <h1>Something went wrong.</h1>;
     }
     if (this.state.moLoginResponse) {
-      if (this.state.moLoginResponse.moLoginStatus == 1) {
+      if (this.state.moLoginResponse.moLoginStatus === 1) {
         return <Redirect to='/Main'></Redirect>
       } 
       errorAlert = (

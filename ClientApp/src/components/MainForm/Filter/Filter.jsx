@@ -1,11 +1,14 @@
 import React, { PureComponent } from 'react'
 import { Select, Input, Checkbox } from 'antd';
+import { connect } from 'react-redux'
 import './Filter.styles.scss';
 const { Option } = Select;
 
 class Filter extends PureComponent {
   constructor(props) {
     super(props);
+    const { filtersData } = this.props;
+
     this.state = {
       filtersData: {},
       selectedFilters: {
@@ -44,7 +47,7 @@ class Filter extends PureComponent {
   selectHandleChange = (eventVal, eventElement) => {
     const { id, value } = eventElement;
     let newState = Object.assign({}, this.state.selectedFilters);
-    newState[id] = this.state.filtersData[id].find(i => i.value == value);
+    newState[id] = this.state.filtersData[id].find(i => i.value === value);
     this.setState({ selectedFilters: newState });
   }
 
@@ -80,11 +83,33 @@ class Filter extends PureComponent {
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_3" value={selectedFilters.specialLines ? selectedFilters.specialLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('specialLines')}</Select>
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.ticketLines ? selectedFilters.ticketLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('ticketLines')}</Select>
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.statusLines ? selectedFilters.statusLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('statusLines')}</Select>
-        <Checkbox onChange={this.checkboxHandleChange} value={this.state.selectedFilters.scrollEnd}>Scroll to end</Checkbox>
+        <Checkbox onChange={this.checkboxHandleChange} checked={this.state.selectedFilters.scrollEnd}>Scroll to end</Checkbox>
       </div >
     )
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    filtersData: state.filtersData
+  }
+};
 
-export default Filter
+const mapDispatchToProps = (dispatch) => {
+  return {
+    selectHandleChange: (eventVal, eventElement) => {
+      // dispatch(setFiltersData());
+    },
+    inputHandleChange: (event) => {
+      // dispatch(setFiltersData());
+    },
+    checkHandleChange: () => {
+      // dispatch(setFiltersData());
+    }
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Filter);

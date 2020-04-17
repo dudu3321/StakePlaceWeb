@@ -8,7 +8,7 @@ const ticketsQueryParamter = (state = initialState, action) => {
   switch (action.type) {
     case SET_QUERY_PARAM:
       let newState = Object.assign({}, state);
-      if (newState.queryParam.Any(x => x == action.index)) {
+      if (newState.queryParam.Any(x => x === action.index)) {
         newState.queryParam[action.index] = action.queryParam;
       }
       else {

@@ -2,7 +2,9 @@ import { SET_FILTERS_DATA } from '../../actions/main';
 
 
 const initialState = {
-  filtersData: {}
+  filtersData: {
+    data1: 'test'
+  }
 };
 
 const filtersData = (state = initialState, action) => {

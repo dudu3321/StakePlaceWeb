@@ -36,12 +36,17 @@ class Main extends PureComponent {
 
     add = () => {
         const { panes } = this.state;
-        const activeKey = (++this.state.newTabIndex).toString();
+        let newActiveKey = this.state.newTabIndex;
+        newActiveKey++;
         panes.push({
-            title: `Tab #${this.state.newTabIndex}`,
-            key: activeKey,
+            title: `Tab #${newActiveKey}`,
+            key: newActiveKey,
         });
-        this.setState({ panes, activeKey });
+        this.setState({ 
+            panes, 
+            activeKey: newActiveKey.toString(),
+            newTabIndex: newActiveKey
+        });
     };
 
     remove = (targetKey) => {
@@ -73,7 +78,7 @@ class Main extends PureComponent {
                     {this.state.panes.map((pane) => {
                         return (
                             <TabPane tab={pane.title} key={pane.key}>
-                                <TabContent></TabContent>
+                                <TabContent TabIndex={pane.key}></TabContent>
                             </TabPane>
                         );
                     })}
