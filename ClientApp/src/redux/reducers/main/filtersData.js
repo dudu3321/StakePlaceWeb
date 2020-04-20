@@ -3,7 +3,6 @@ import { SET_FILTERS_DATA } from '../../actions/main';
 
 const initialState = {
   filtersData: {
-    data1: 'test'
   }
 };
 

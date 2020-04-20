@@ -78,7 +78,7 @@ class Main extends PureComponent {
                     {this.state.panes.map((pane) => {
                         return (
                             <TabPane tab={pane.title} key={pane.key}>
-                                <TabContent TabIndex={pane.key}></TabContent>
+                                <TabContent tabIndex={pane.key}></TabContent>
                             </TabPane>
                         );
                     })}

@@ -1,23 +1,20 @@
 import React, { PureComponent } from 'react'
 import { Select, Input, Checkbox } from 'antd';
 import { connect } from 'react-redux'
+import { setFiltersData, setQueryParam } from '../../../redux/actions/main/index'
 import './Filter.styles.scss';
 const { Option } = Select;
+
+const defaultQueryParam = {
+  Amount: '',
+  Ip: '',
+  Account: '',
+  scrollEnd: false
+}
 
 class Filter extends PureComponent {
   constructor(props) {
     super(props);
-    const { filtersData } = this.props;
-
-    this.state = {
-      filtersData: {},
-      selectedFilters: {
-        Amount: '',
-        Ip: '',
-        Account: '',
-        scrollEnd: false
-      }
-    }
     this.getFiltersData();
   }
 
@@ -25,20 +22,21 @@ class Filter extends PureComponent {
     fetch('Filter')
       .then(response => response.json())
       .then(result => {
-        this.setState({ filtersData: result });
         if (result) {
+          const { queryParam } = this.props;
+          let newState = Object.assign({}, queryParam);
           for (let key in result) {
-            let newState = Object.assign({}, this.state.selectedFilters);
             newState[key] = result[key][0];
-            this.setState({ selectedFilters: newState });
           }
+          this.props.setFiltersData(result);
+          this.props.setQueryParam({ ...newState, ...defaultQueryParam });
         }
       });;
   }
 
   getSelectOptions = (key) => {
-    const { filtersData } = this.state;
-    if (filtersData[key]) {
+    let { filtersData } = Object.assign({}, this.props);
+    if (typeof filtersData[key] !== 'undefined') {
       return filtersData[key].map(i => <Option className="options" key={i.value} id={key}>{i.description}</Option>);
     }
     return;
@@ -46,68 +44,79 @@ class Filter extends PureComponent {
 
   selectHandleChange = (eventVal, eventElement) => {
     const { id, value } = eventElement;
-    let newState = Object.assign({}, this.state.selectedFilters);
-    newState[id] = this.state.filtersData[id].find(i => i.value === value);
-    this.setState({ selectedFilters: newState });
+    const { queryParam, filtersData } = this.props;
+    let newState = Object.assign({}, queryParam);
+    newState[id] = filtersData[id].find(i => i.value == value);
+    this.props.setQueryParam(newState);
   }
 
   inputHandleChange = (event) => {
     const { value, id } = event.target;
-    let newState = Object.assign({}, this.state.selectedFilters);
+    const { queryParam } = this.props;
+    let newState = Object.assign({}, queryParam);
 
     newState[id] = value;
-    this.setState({ selectedFilters: newState });
+    this.props.setQueryParam(newState);
   }
 
   checkboxHandleChange = () => {
-    let newState = Object.assign({}, this.state.selectedFilters);
+    const { queryParam } = this.props;
+    let newState = Object.assign({}, queryParam);
 
     newState.scrollEnd = !newState.scrollEnd;
-    this.setState({ selectedFilters: newState });
+    this.props.setQueryParam(newState);
   }
 
   render() {
-    const { selectedFilters } = this.state;
+    let { queryParam, tabIndex } = Object.assign({}, this.props);
+    // if (typeof queryParam[tabIndex] !== 'undefined') {
+    //   queryParam = queryParam[tabIndex];
+      return (
+        < div >
+          <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={queryParam.viewLines ? queryParam.viewLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('viewLines')}</Select>
+          <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={queryParam.marketLines ? queryParam.marketLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('marketLines')}</Select>
+          <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={queryParam.recordLines ? queryParam.recordLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('recordLines')}</Select>
+          <Input className="input" id="Amount" placeholder="Bet >=" value={queryParam.Amount} onChange={this.inputHandleChange}></Input>
+          <Input className="input" id="Account" placeholder="Account" value={queryParam.Account} onChange={this.inputHandleChange}></Input>
+          <Input className="input" id="Ip" placeholder="IP" value={queryParam.Ip} onChange={this.inputHandleChange}></Input>
+          <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={queryParam.sportLines ? queryParam.sportLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('sportLines')}</Select>
+          <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_2" value={queryParam.transactionLines ? queryParam.transactionLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('transactionLines')}</Select>
+          <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_4" value={queryParam.vipLines ? queryParam.vipLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('vipLines')}</Select>
+          <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_3" value={queryParam.specialLines ? queryParam.specialLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('specialLines')}</Select>
+          <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={queryParam.ticketLines ? queryParam.ticketLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('ticketLines')}</Select>
+          <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={queryParam.statusLines ? queryParam.statusLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('statusLines')}</Select>
+          <Checkbox onChange={this.checkboxHandleChange} checked={queryParam.scrollEnd}>Scroll to end</Checkbox>
+        </div >
+      )
+    // }
+    // return (<div></div>);
 
-    return (
-      < div >
-        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.viewLines ? selectedFilters.viewLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('viewLines')}</Select>
-        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.marketLines ? selectedFilters.marketLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('marketLines')}</Select>
-        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.recordLines ? selectedFilters.recordLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('recordLines')}</Select>
-        <Input className="input" id="Amount" placeholder="Bet >=" value={this.state.selectedFilters.Amount} onChange={this.inputHandleChange}></Input>
-        <Input className="input" id="Account" placeholder="Account" value={this.state.selectedFilters.Account} onChange={this.inputHandleChange}></Input>
-        <Input className="input" id="Ip" placeholder="IP" value={this.state.selectedFilters.Ip} onChange={this.inputHandleChange}></Input>
-        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.sportLines ? selectedFilters.sportLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('sportLines')}</Select>
-        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_2" value={selectedFilters.transactionLines ? selectedFilters.transactionLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('transactionLines')}</Select>
-        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_4" value={selectedFilters.vipLines ? selectedFilters.vipLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('vipLines')}</Select>
-        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_3" value={selectedFilters.specialLines ? selectedFilters.specialLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('specialLines')}</Select>
-        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.ticketLines ? selectedFilters.ticketLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('ticketLines')}</Select>
-        <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={selectedFilters.statusLines ? selectedFilters.statusLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('statusLines')}</Select>
-        <Checkbox onChange={this.checkboxHandleChange} checked={this.state.selectedFilters.scrollEnd}>Scroll to end</Checkbox>
-      </div >
-    )
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    filtersData: state.filtersData
+const mapStateToProps = (state, props) => {
+  const {tabIndex} = props;
+  let queryParam = Object.assign({}, state.ticketsQueryParamter.queryParam);
+  if(typeof queryParam[tabIndex] !== 'undefined'){
+    queryParam = queryParam[tabIndex];
   }
-};
-
-const mapDispatchToProps = (dispatch) => {
   return {
-    selectHandleChange: (eventVal, eventElement) => {
-      // dispatch(setFiltersData());
+    filtersData: state.filtersData.filtersData,
+    queryParam: queryParam
+  }
+}
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    setQueryParam: (newState) => {
+      const { tabIndex } = props;
+      dispatch(setQueryParam(tabIndex, newState));
     },
-    inputHandleChange: (event) => {
-      // dispatch(setFiltersData());
-    },
-    checkHandleChange: () => {
-      // dispatch(setFiltersData());
+    setFiltersData: (newState) => {
+      dispatch(setFiltersData(newState));
     }
   }
-};
+}
 
 export default connect(
   mapStateToProps,

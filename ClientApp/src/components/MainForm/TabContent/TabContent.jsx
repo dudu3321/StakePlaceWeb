@@ -14,18 +14,18 @@ class TabContent extends PureComponent {
       tabIndex: tabIndex
     }
   }
-  
+
   render() {
     return (
       <div>
         <div className="tab_content_control">
-          <Filter TabIndex={this.state.tabIndex}></Filter>
+          <Filter tabIndex={this.state.tabIndex}></Filter>
         </div>
         <div className="tab_content_control tab_content_Info">
-          <Info TabIndex={this.state.tabIndex}></Info>
+          <Info tabIndex={this.state.tabIndex}></Info>
         </div>
         <div className="tab_content_control">
-          <ResultData TabIndex={this.state.tabIndex}></ResultData>
+          <ResultData tabIndex={this.state.tabIndex}></ResultData>
         </div>
       </div>
     )
@@ -33,12 +33,12 @@ class TabContent extends PureComponent {
 }
 
 const mapStateToProps = (state) => {
-
-};
+  return {};
+}
 
 const mapDispatchToProps = (dispatch) => {
-
-};
+  return {};
+}
 
 export default connect(
   mapStateToProps,
