@@ -150,9 +150,16 @@ const columns = [
 
 class ResultData extends PureComponent {
   constructor(props) {
-    super(props)
+    super(props);
+  }
 
-    setTimeout(this.getResultData, 1000);
+  componentDidMount = () => {
+    this.getResultData();
+    this.intervalId = setInterval(this.getResultData, 1000);
+  }
+
+  componentWillUnmount = () => {
+    clearInterval(this.intervalId);
   }
 
   getResultData = async () => {
