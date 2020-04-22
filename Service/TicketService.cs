@@ -37,22 +37,13 @@ namespace stake_place_web.Service
 
             var result = new TicketsQueryParameters ();
 
-            #region LastQueryTime
-
-            try
-            {
-                result.LastQueryTime = request.LastQueryTime;
-            }
-            catch (Exception) { }
-
-            #endregion
-
             #region View
 
             result.View = Views.OnlyMOMatches;
             try
             {
-                result.View = request.View;
+                result.View = request.ViewLines;
+                result.MatchCodes = request.MatchCodes;
             }
             catch (Exception)
             {
@@ -68,7 +59,7 @@ namespace stake_place_web.Service
             result.Market = Markets.All;
             try
             {
-                result.Market = request.Market;
+                result.Market = request.MarketLines;
             }
             catch (Exception)
             {
@@ -84,7 +75,7 @@ namespace stake_place_web.Service
             result.Record = Records.FiftyLines;
             try
             {
-                result.Record = request.Record;
+                result.Record = request.RecordLines;
             }
             catch (Exception)
             {
@@ -147,7 +138,7 @@ namespace stake_place_web.Service
             result.Sport = Sports.All;
             try
             {
-                result.Sport = request.Sport;
+                result.Sport = request.SportLines;
             }
             catch (Exception)
             {
@@ -163,7 +154,7 @@ namespace stake_place_web.Service
             result.Transaction = Transactions.All;
             try
             {
-                result.Transaction = request.Transaction;
+                result.Transaction = request.TransactionLines;
             }
             catch (Exception)
             {
@@ -179,7 +170,7 @@ namespace stake_place_web.Service
             result.VipType = 0;
             try
             {
-                result.VipType = request.Vip;
+                result.VipType = request.VipLines;
             }
             catch (Exception)
             {
@@ -195,7 +186,7 @@ namespace stake_place_web.Service
             result.Special = 0;
             try
             {
-                result.Special = request.Special;
+                result.Special = request.SpecialLines;
             }
             catch (Exception)
             {
@@ -211,7 +202,7 @@ namespace stake_place_web.Service
             result.Ticket = Tickets.All;
             try
             {
-                result.Ticket = request.Ticket;
+                result.Ticket = request.TicketLines;
             }
             catch (Exception)
             {
@@ -227,7 +218,7 @@ namespace stake_place_web.Service
             result.Status = Status.All;
             try
             {
-                result.Status = request.Status;
+                result.Status = request.StatusLines;
             }
             catch (Exception)
             {

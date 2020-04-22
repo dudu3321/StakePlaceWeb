@@ -18,7 +18,7 @@
     "stake_place_web": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:15151",
+      "applicationUrl": "http://localhost:1003",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

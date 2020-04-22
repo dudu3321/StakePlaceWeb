@@ -5,9 +5,9 @@ const initialState = {
 };
 
 const ticketsQueryParamter = (state = initialState, action) => {
+  let newState = Object.assign({}, state);
   switch (action.type) {
     case SET_QUERY_PARAM:
-      let newState = Object.assign({}, state);
       const { index, queryParam } = action;
       newState.queryParam.splice(index, 1, queryParam);
       return newState;

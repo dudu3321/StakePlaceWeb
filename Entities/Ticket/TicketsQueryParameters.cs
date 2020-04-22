@@ -31,7 +31,7 @@ namespace stake_place_web.Entities.Ticket
         public int Special { get; set; }
         public Tickets Ticket { get; set; }
         public Status Status { get; set; }
-        public List<int> MatchCodes { get; set; }
+        public List<int?> MatchCodes { get; set; }
 
         public int LastSocTransIdFound { get; set; } = 0;
         public int LastSocTransTradeInIdFound { get; set; } = 0;
@@ -73,7 +73,7 @@ namespace stake_place_web.Entities.Ticket
             Special = 0;
             Ticket = Tickets.All;
             Status = Status.All;
-            MatchCodes = new List<int> ();
+            MatchCodes = new List<int?> ();
 
             _filters = new List<FilterDefinition<MiniTicketV2>> ();
         }
