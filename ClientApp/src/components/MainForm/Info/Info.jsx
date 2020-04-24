@@ -1,14 +1,11 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
+import * as moment from 'moment'
 import './Info.styles.scss';
 
 class Info extends PureComponent {
-  constructor(props) {
-    super(props)
-  }
-
   componentDidMount = () => {
-    this.intervalId = setInterval(() => {this.forceUpdate();}, 10000);
+    this.intervalId = setInterval(() => { this.forceUpdate(); }, 10000);
   }
 
   componentWillUnmount = () => {
@@ -19,10 +16,11 @@ class Info extends PureComponent {
     const { resultDetailData } = this.props;
     return (
       <div>
-        <label>Added: {resultDetailData.added ?? 0}</label>
-        <label>Stocks: {resultDetailData.stocks ?? 0}</label>
-        <label>Trade Ins: {resultDetailData.tradeIns ?? 0}</label>
-        <label>Late pending: {resultDetailData.latePending ?? 0}</label>
+        <label className='label_Info'>Added: {resultDetailData.added ?? 0}</label>
+        <label className='label_Info'>Stocks: {resultDetailData.stocks ?? 0}</label>
+        <label className='label_Info'>Trade Ins: {resultDetailData.tradeIns ?? 0}</label>
+        <label className='label_Info'>Late pending: {resultDetailData.latePending ?? 0}</label>
+        <label className='label_Time'>{moment().format('hh:MM:ss')}</label>
       </div>
     )
   }
@@ -41,7 +39,7 @@ const mapStateToProps = (state, props) => {
     resultDetailData: resultData
   }
 };
-const mapDispatchToProps = () => { 
+const mapDispatchToProps = () => {
   return {}
 };
 export default connect(mapStateToProps,

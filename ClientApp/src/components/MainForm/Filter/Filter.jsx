@@ -46,7 +46,7 @@ class Filter extends PureComponent {
     const { id, value } = eventElement;
     const { queryParam, filtersData } = this.props;
     let newState = Object.assign({}, queryParam);
-    newState[id] = filtersData[id].find(i => i.value == value);
+    newState[id] = filtersData[id].find(i => i.value === parseInt(value));
     this.props.setQueryParam(newState);
   }
 
@@ -68,7 +68,7 @@ class Filter extends PureComponent {
   }
 
   render() {
-    let { queryParam, tabIndex } = Object.assign({}, this.props);
+    let { queryParam } = Object.assign({}, this.props);
     // if (typeof queryParam[tabIndex] !== 'undefined') {
     //   queryParam = queryParam[tabIndex];
       return (
