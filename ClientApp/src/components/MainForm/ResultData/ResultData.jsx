@@ -19,7 +19,8 @@ class ResultData extends PureComponent {
   }
 
   getResultData = async () => {
-    const { queryParam, cookies } = this.props;
+    const { queryParam, cookies, resultData } = this.props;
+    
     if (Object.keys(queryParam).length <= 1) return;
     fetch('ticket', {
       method: 'POST',
@@ -34,7 +35,7 @@ class ResultData extends PureComponent {
     })
       .then(response => response.json())
       .then(result => {
-        let newResultData = Object.assign({}, this.resultData);
+        let newResultData = [...resultData];
         if (result) {
           let resultDetailData = {
             added: 0,
@@ -45,13 +46,14 @@ class ResultData extends PureComponent {
           };
 
           //更新舊有資料
-          if (Object.keys(newResultData).length === 0) {
+          //沒有舊有資料情況
+          if (newResultData.length === 0) {
             newResultData = result;
             resultDetailData.added = result.length;
           }
           else {
             result.forEach(e => {
-              let oldElement = newResultData.find(x => x.SocTransId === e.SocTransId);
+              let oldElement = newResultData.find(x => x.refNo === e.refNo);
               if (oldElement) {
                 oldElement = e;
               }
@@ -98,7 +100,7 @@ class ResultData extends PureComponent {
 
   render() {
     const { resultData } = this.props;
-    if (typeof resultData.length === 'undefined') {
+    if (resultData === 'undefined') {
       return (<Table columns={tableSchema}></Table>)
     }
     return (<Table columns={tableSchema} dataSource={resultData} scroll={{ x: 1800 }} rowKey="refNo"></Table>)
@@ -108,19 +110,12 @@ class ResultData extends PureComponent {
 
 const mapStateToProps = (state, props) => {
   const { tabIndex } = props;
+  const { resultData } = state;
   let queryParam = Object.assign({}, state.ticketsQueryParamter.queryParam);
-  if (typeof queryParam[tabIndex] !== 'undefined') {
-    queryParam = queryParam[tabIndex];
-  }
-  let resultData = Object.assign({}, state.resultData);
-  if (Object.keys(resultData).length > 0) {
-    if (typeof resultData.resultData[tabIndex] !== 'undefined') {
-      resultData = resultData.resultData[tabIndex];
-    }
-  }
+  let data = resultData.resultData;
   return {
-    queryParam: queryParam,
-    resultData: resultData
+    queryParam: (typeof queryParam[tabIndex] !== 'undefined') ? queryParam[tabIndex] : {},
+    resultData: (typeof data[tabIndex] !== 'undefined') ? data[tabIndex] : []
   }
 }
 
