@@ -1,17 +1,22 @@
-export const SET_FILTERS = 'SET_FILTERS';
-export const SET_FILTER_SELECTED = 'SET_FILTER_SELECTED';
-export const SET_ALL_FILTER_SELECTED = 'SET_ALL_FILTER_SELECTED';
+export const SET_FILTERS_DATA = 'SET_FILTERS_DATA';
+export const SET_QUERY_PARAM = 'SET_QUERY_PARAM';
+export const SET_RESULT_DATA = 'SET_RESULT_DATA';
+
 export const setFiltersData = (filtersData) => ({
-  type: SET_FILTERS,
-  filtersData,
+  type: SET_FILTERS_DATA,
+  filtersData
 });
 
-export const setFilterSelected = (selectedObj) => ({
-  type: SET_FILTER_SELECTED,
-  selectedObj,
+export const setQueryParam = (index, queryParam) => ({
+  type: SET_QUERY_PARAM,
+  index,
+  queryParam
 });
 
-export const setAllFilterSelected = (selectedObj) => ({
-  type: SET_FILTER_SELECTED,
-  selectedObj,
+export const setResultData = (index, resultData) => ({
+  type: SET_RESULT_DATA,
+  index,
+  resultData
 });
+
+

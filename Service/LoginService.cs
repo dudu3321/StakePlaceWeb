@@ -56,7 +56,7 @@ namespace stake_place_web.Service
             var connectionString = _config["MongoTicketsStatusConnectionString"];
             var mongoDbId = $"{Environment.UserName}@{Environment.MachineName}@{Helpers.GetLocalIPAddress()}";
             var APPLICATION_NAME = _config["ApplicationName"];
-            
+
             _miniUserV2Dao = MiniUserV2Dao.CreateInstance (connectionString,
                 $"{mongoDbId}@MiniUserV2Dao@MOClient@{APPLICATION_NAME}");
             _miniUserMatchIdsV2Dao = MiniUserMatchIdsV2Dao.CreateInstance (connectionString,
@@ -119,8 +119,8 @@ namespace stake_place_web.Service
                             MiniUserMatchIdsV2 miniUserMatchIds;
                             if (_miniUserMatchIdsV2Dao.TryQueryOne (moLogin, out miniUserMatchIds))
                             {
-                                moLoginResponse.MatchCodes.Clear ();
-                                moLoginResponse.MatchCodes.AddRange (miniUserMatchIds.MatchIds);
+                                pendingMoLogin[moLogin].MatchCodes.Clear ();
+                                pendingMoLogin[moLogin].MatchCodes.AddRange (miniUserMatchIds.MatchIds);
                             }
                             ReceivedInvoke (MoLoginStatus.Success, moLogin, "", "");
                         }
@@ -153,78 +153,81 @@ namespace stake_place_web.Service
 
         private void TcpClientOnReceiveEvent (object sender, int tid, Stream data)
         {
-            var quitMesage = string.Empty;
-            var response = StreamConvert.StreamToString (data, false, true);
-            string[] loginResult = response.Split ('#');
-            var moLogin = loginResult[0];
-            var moLoginResponse = pendingMoLogin[moLogin];
-            var command = (MoLoginStatus) tid;
-            switch (command)
+            try
             {
-                case MoLoginStatus.Success:
-                    {
-                        if (loginResult.Length < 4)
+                var quitMesage = string.Empty;
+                var response = StreamConvert.StreamToString (data, false, true);
+                string[] loginResult = response.Split ('#');
+                var moLogin = loginResult[0];
+                var moLoginResponse = pendingMoLogin[moLogin];
+                var command = (MoLoginStatus) tid;
+                switch (command)
+                {
+                    case MoLoginStatus.Success:
                         {
-                            ReceivedInvoke (MoLoginStatus.Error, moLogin, "MOService Error Message",
+                            if (loginResult.Length < 4)
+                            {
+                                ReceivedInvoke (MoLoginStatus.Error, moLogin, "MOService Error Message",
+                                    "An error happened during login. Error message below " +
+                                    $"{Environment.NewLine} msg={response}");
+                                break;
+                            }
+
+                            var userLevels = loginResult[1].Split (new []
+                            {
+                                ','
+                            }, StringSplitOptions.RemoveEmptyEntries);
+
+                            if (userLevels.Length > 0)
+                            {
+                                moLoginResponse.UserLevels.Clear ();
+                                moLoginResponse.UserLevels.AddRange (userLevels);
+                                GetMeta (moLogin, moLoginResponse);
+                                ReceivedInvoke (command, moLogin, "", "");
+                                break;
+                            }
+
+                            var errorMessage = loginResult[2];
+                            ReceivedInvoke (command, moLogin, "MOService Error Message",
                                 "An error happened during login. Error message below " +
-                                $"{Environment.NewLine} msg={response}");
+                                $"{Environment.NewLine} msg={errorMessage}");
                             break;
                         }
-
-                        var userLevels = loginResult[1].Split (new []
-                        {
-                            ','
-                        }, StringSplitOptions.RemoveEmptyEntries);
-
-                        if (userLevels.Length > 0)
-                        {
-                            ReceivedInvoke (command, moLogin, "", "");
-                            moLoginResponse.UserLevels.Clear ();
-                            moLoginResponse.UserLevels.AddRange (userLevels);
-                            GetMeta (moLogin, moLoginResponse);
-                            break;
-                        }
-
-                        var errorMessage = loginResult[2];
-                        ReceivedInvoke (command, moLogin, "MOService Error Message",
-                            "An error happened during login. Error message below " +
-                            $"{Environment.NewLine} msg={errorMessage}");
+                    case MoLoginStatus.WrongPassword:
+                        ReceivedInvoke (command, moLogin, "MOService Credentials errors",
+                            "Your password is incorrect.");
                         break;
-                    }
-                case MoLoginStatus.WrongPassword:
-                    ReceivedInvoke (command, moLogin, "MOService Credentials errors",
-                        "Your password is incorrect.");
-                    break;
-                case MoLoginStatus.AccountInactive:
-                    ReceivedInvoke (command, moLogin, "MOService Credentials errors",
-                        "Your account has been closed/locked.");
-                    break;
-                case MoLoginStatus.LoginAreaLimit:
-                    ReceivedInvoke (command, moLogin, "MOService Credentials errors",
-                        $"You are not authorized to login. tid={tid}");
-                    break;
-                case MoLoginStatus.UserNotExists:
-                    ReceivedInvoke (command, moLogin, "MOService Credentials errors",
-                        "Your login is unknown.");
-                    break;
-                case MoLoginStatus.InvalidArguments:
-                    ReceivedInvoke (command, moLogin, "MOService Credentials errors",
-                        "The login request to MOService was not well formatted. " +
-                        "Please contact IT NOC");
-                    break;
-                case MoLoginStatus.KickOut:
-                    ReceivedInvoke (command, moLogin, "", "You have been logged out by the system due to multiple login. " +
-                        "This session will be terminated!");
-                    break;
-                case MoLoginStatus.NoResponse:
-                    ReceivedInvoke (command, moLogin, "MOService Notification", "The server is not responding, please try again later!");
-                    break;
-                default:
-                    ReceivedInvoke (command, moLogin, "MOService Credentials errors",
-                        "Unmanaged/Undefined login response. Please contact IT NOC. " +
-                        $"tid={command}");
-                    break;
-            }
+                    case MoLoginStatus.AccountInactive:
+                        ReceivedInvoke (command, moLogin, "MOService Credentials errors",
+                            "Your account has been closed/locked.");
+                        break;
+                    case MoLoginStatus.LoginAreaLimit:
+                        ReceivedInvoke (command, moLogin, "MOService Credentials errors",
+                            $"You are not authorized to login. tid={tid}");
+                        break;
+                    case MoLoginStatus.UserNotExists:
+                        ReceivedInvoke (command, moLogin, "MOService Credentials errors",
+                            "Your login is unknown.");
+                        break;
+                    case MoLoginStatus.InvalidArguments:
+                        ReceivedInvoke (command, moLogin, "MOService Credentials errors",
+                            "The login request to MOService was not well formatted. " +
+                            "Please contact IT NOC");
+                        break;
+                    case MoLoginStatus.KickOut:
+                        ReceivedInvoke (command, moLogin, "", "You have been logged out by the system due to multiple login. " +
+                            "This session will be terminated!");
+                        break;
+                    case MoLoginStatus.NoResponse:
+                        ReceivedInvoke (command, moLogin, "MOService Notification", "The server is not responding, please try again later!");
+                        break;
+                    default:
+                        ReceivedInvoke (command, moLogin, "MOService Credentials errors",
+                            "Unmanaged/Undefined login response. Please contact IT NOC. " +
+                            $"tid={command}");
+                        break;
+                }
+            }catch(Exception ex){}
         }
 
         #endregion

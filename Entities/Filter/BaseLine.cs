@@ -3,44 +3,30 @@ using System.Collections.Generic;
 using DataStruct.Cache.Classes;
 using StakePlaceEntities;
 
-namespace stake_place_web.Entities.Filter {
-
-    public abstract class BaseLine {
-        public string Id { get; protected set; }
-        public string Description { get; protected set; }
-
-        protected BaseLine (string description) {
-            Description = description;
-        }
-    }
-
-    public abstract class BaseLine<T> : BaseLine {
-        public T Value { get; protected set; }
-
-        protected BaseLine (T value, string description) : base (description) {
-            Value = value;
-            Id = $"{Value}";
-        }
-
-    }
-
-    public class ViewLine : BaseLine<Views> {
+namespace stake_place_web.Entities.Filter
+{
+    public class ViewLine : BaseLine<Views>
+    {
         public ViewLine (Views value, string description) : base (value, description) { }
 
-        public static List<ViewLine> GetAllLines => new List<ViewLine> {
+        public static List<ViewLine> GetAllLines => new List<ViewLine>
+        {
             new ViewLine (Views.OnlyMOMatches, "MO matches"),
             new ViewLine (Views.AllMatches, "All matches")
         };
 
-        public static List<ViewLine> GetMOOnlyLines => new List<ViewLine> {
+        public static List<ViewLine> GetMOOnlyLines => new List<ViewLine>
+        {
             new ViewLine (Views.OnlyMOMatches, "MO matches")
         };
     }
 
-    public class MarketLine : BaseLine<Markets> {
+    public class MarketLine : BaseLine<Markets>
+    {
         public MarketLine (Markets value, string description) : base (value, description) { }
 
-        public static List<MarketLine> GetAllLines => new List<MarketLine> {
+        public static List<MarketLine> GetAllLines => new List<MarketLine>
+        {
             new MarketLine (Markets.All, "All markets"),
             new MarketLine (Markets.Early, "Early"),
             new MarketLine (Markets.Today, "Today"),
@@ -49,10 +35,12 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    public class RecordLine : BaseLine<Records> {
+    public class RecordLine : BaseLine<Records>
+    {
         public RecordLine (Records value, string description) : base (value, description) { }
 
-        public static List<RecordLine> GetAllLines => new List<RecordLine> {
+        public static List<RecordLine> GetAllLines => new List<RecordLine>
+        {
             new RecordLine (Records.FiftyLines, "50 tickets"),
             new RecordLine (Records.OneHundredLines, "100 tickets"),
             new RecordLine (Records.TwoHundredLines, "200 tickets"),
@@ -61,7 +49,8 @@ namespace stake_place_web.Entities.Filter {
             new RecordLine (Records.TwoThousandLines, "2000 tickets")
         };
 
-        public static List<RecordLine> GetMOOnlyLines => new List<RecordLine> {
+        public static List<RecordLine> GetMOOnlyLines => new List<RecordLine>
+        {
             new RecordLine (Records.FiftyLines, "50 tickets"),
             new RecordLine (Records.OneHundredLines, "100 tickets"),
             new RecordLine (Records.TwoHundredLines, "200 tickets"),
@@ -69,10 +58,12 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    public class SportLine : BaseLine<Sports> {
+    public class SportLine : BaseLine<Sports>
+    {
         public SportLine (Sports value, string description) : base (value, description) { }
 
-        public static List<SportLine> GetAllLines => new List<SportLine> {
+        public static List<SportLine> GetAllLines => new List<SportLine>
+        {
             new SportLine (Sports.All, "All sports"),
             new SportLine (Sports.Soccer, "Soccer"),
             new SportLine (Sports.Others, "Others"),
@@ -126,10 +117,12 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    public class TransactionLine : BaseLine<Transactions> {
+    public class TransactionLine : BaseLine<Transactions>
+    {
         public TransactionLine (Transactions value, string description) : base (value, description) { }
 
-        public static List<TransactionLine> GetAllLines => new List<TransactionLine> {
+        public static List<TransactionLine> GetAllLines => new List<TransactionLine>
+        {
             new TransactionLine (Transactions.All, "All types"),
             new TransactionLine (Transactions.HdpAndOu, "HDP+OU"),
             new TransactionLine (Transactions.Parlays, "PAR"),
@@ -138,20 +131,24 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    public class TicketLine : BaseLine<Tickets> {
+    public class TicketLine : BaseLine<Tickets>
+    {
         public TicketLine (Tickets value, string description) : base (value, description) { }
 
-        public static List<TicketLine> GetAllLines => new List<TicketLine> {
+        public static List<TicketLine> GetAllLines => new List<TicketLine>
+        {
             new TicketLine (Tickets.All, "All tickets"),
             new TicketLine (Tickets.Normal, "Normal"),
             new TicketLine (Tickets.TradeIn, "TradeIn"),
         };
     }
 
-    public class StatusLine : BaseLine<Status> {
+    public class StatusLine : BaseLine<Status>
+    {
         public StatusLine (Status value, string description) : base (value, description) { }
 
-        public static List<StatusLine> GetAllLines => new List<StatusLine> {
+        public static List<StatusLine> GetAllLines => new List<StatusLine>
+        {
             new StatusLine (Status.All, "All status"),
             new StatusLine (Status.Pending, "Pending"),
             new StatusLine (Status.Accepted, "Accepted"),
@@ -160,16 +157,20 @@ namespace stake_place_web.Entities.Filter {
         };
     }
 
-    public class VipLine : BaseLine<int> {
+    public class VipLine : BaseLine<int>
+    {
         public VipLine (int value, string description) : base (value, description) { }
 
-        public static List<VipLine> GetAllLines => new List<VipLine> {
+        public static List<VipLine> GetAllLines => new List<VipLine>
+        {
             new VipLine (0, "All members"),
             new VipLine (-1, "All VIPs"),
         };
 
-        public static void AddRange (List<VipLine> vipTypes, List<MiniVipTypeV2> vipTypesToAdd) {
-            foreach (var vipType in vipTypesToAdd) {
+        public static void AddRange (List<VipLine> vipTypes, List<MiniVipTypeV2> vipTypesToAdd)
+        {
+            foreach (var vipType in vipTypesToAdd)
+            {
                 var vipTypeId = vipType.Id;
                 var value = vipType.Description;
                 vipTypes.Add (new VipLine (vipTypeId, value));
@@ -177,8 +178,10 @@ namespace stake_place_web.Entities.Filter {
         }
 
         [Obsolete ("", true)]
-        public static void AddRange (List<VipLine> vipTypes, List<MiniVipType> vipTypesToAdd) {
-            foreach (var vipType in vipTypesToAdd) {
+        public static void AddRange (List<VipLine> vipTypes, List<MiniVipType> vipTypesToAdd)
+        {
+            foreach (var vipType in vipTypesToAdd)
+            {
                 var vipTypeId = vipType.VIPType;
                 var value = vipType.VIPDesc;
                 vipTypes.Add (new VipLine (vipTypeId, value));
@@ -186,17 +189,21 @@ namespace stake_place_web.Entities.Filter {
         }
     }
 
-    public class SpecialLine : BaseLine<int> {
+    public class SpecialLine : BaseLine<int>
+    {
         public SpecialLine (int value, string description) : base (value, description) { }
 
-        public static List<SpecialLine> GetAllLines => new List<SpecialLine> {
+        public static List<SpecialLine> GetAllLines => new List<SpecialLine>
+        {
             new SpecialLine (0, "All leagues"),
             new SpecialLine (-1, "All (specials)"),
             new SpecialLine (-2, "All (normals)"),
         };
 
-        public static void AddRange (List<SpecialLine> specials, List<MiniSpecialLanguageV2> specialsToAdd) {
-            foreach (var specialLanguage in specialsToAdd) {
+        public static void AddRange (List<SpecialLine> specials, List<MiniSpecialLanguageV2> specialsToAdd)
+        {
+            foreach (var specialLanguage in specialsToAdd)
+            {
                 var specialId = specialLanguage.Id;
                 var special = specialLanguage.MODesc;
                 specials.Add (new SpecialLine (specialId, special));
@@ -204,8 +211,10 @@ namespace stake_place_web.Entities.Filter {
         }
 
         [Obsolete ("", true)]
-        public static void AddRange (List<SpecialLine> specials, List<SpecialLanguages> specialsToAdd) {
-            foreach (var specialLanguage in specialsToAdd) {
+        public static void AddRange (List<SpecialLine> specials, List<SpecialLanguages> specialsToAdd)
+        {
+            foreach (var specialLanguage in specialsToAdd)
+            {
                 var specialId = specialLanguage.SpecialId;
                 var language = specialLanguage.Languages["en_US"];
                 var special = language.SpecialMODesc;
@@ -215,7 +224,8 @@ namespace stake_place_web.Entities.Filter {
     }
 
     [Obsolete ("", true)]
-    public enum TicketRequests {
+    public enum TicketRequests
+    {
         OneThousand,
         OneThousandFiveHundreds,
         TwoThousands,
@@ -224,10 +234,12 @@ namespace stake_place_web.Entities.Filter {
     }
 
     [Obsolete ("", true)]
-    public class TicketRequestsLine : BaseLine<TicketRequests> {
+    public class TicketRequestsLine : BaseLine<TicketRequests>
+    {
         private TicketRequestsLine (TicketRequests value, string description) : base (value, description) { }
 
-        public static List<TicketRequestsLine> GetAllLines => new List<TicketRequestsLine> {
+        public static List<TicketRequestsLine> GetAllLines => new List<TicketRequestsLine>
+        {
             new TicketRequestsLine (TicketRequests.OneThousand, "1.0 sec."),
             new TicketRequestsLine (TicketRequests.OneThousandFiveHundreds, "1.5 sec."),
             new TicketRequestsLine (TicketRequests.TwoThousands, "2.0 sec."),

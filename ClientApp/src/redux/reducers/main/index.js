@@ -1,10 +1,11 @@
 import { combineReducers } from 'redux';
-import filters from './filters';
-import selectedFilters from './selectedFilters';
-
+import filtersData from './filtersData';
+import ticketsQueryParamter from './ticketsQueryParamter';
+import resultData from './resultData'
 const filterApp = combineReducers({
-  filters,
-  selectedFilters
+  filtersData,
+  ticketsQueryParamter,
+  resultData
 });
 
 export default filterApp;
