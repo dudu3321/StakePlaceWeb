@@ -17,10 +17,10 @@ namespace stake_place_web.Controllers
         }
 
         [HttpPost]
-        public List<StakePlaceTicket> Post ([FromBody] TicketRequest request)
+        public TicketResponse Post ([FromBody] TicketRequest request)
         {
             var ticketParameters = _ticketService.GetTicketParameters (request);
-            return _ticketService.GetTickets (ticketParameters, request.UserLevels);
+            return _ticketService.GetTicketResponse (request.ConnectionId, _ticketService.GetTickets (ticketParameters));
         }
     }
 }

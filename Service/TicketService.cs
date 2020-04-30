@@ -1,10 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using stake_place_web.Entities;
 using stake_place_web.Entities.Ticket;
+using stake_place_web.Hubs;
 using StakePlaceEntities;
 using StakePlaceEntities.Dao.MongoDb;
 
@@ -12,24 +19,59 @@ namespace stake_place_web.Service
 {
     public interface ITicketService
     {
+        Dictionary<string, TicketsQueryParameters> onConnectUserParams { get; set; }
+        Dictionary<string, List<StakePlaceTicket>> onConnectUserLastQueryResult { get; set; }
         TicketsQueryParameters GetTicketParameters (TicketRequest request);
-        List<StakePlaceTicket> GetTickets (TicketsQueryParameters _ticketsQueryParameters, List<string> userLevels);
+        List<StakePlaceTicket> GetTickets (TicketsQueryParameters _ticketsQueryParameters);
+        TicketResponse GetTicketResponse (string conneciontId, List<StakePlaceTicket> tickets);
     }
 
     public class TicketService : ITicketService
     {
-        MiniTicketV2Dao _miniTicketV2Dao;
-        IConfiguration _config;
-        public TicketService (IConfiguration config)
+
+        public Dictionary<string, TicketsQueryParameters> onConnectUserParams { get; set; }
+        public Dictionary<string, List<StakePlaceTicket>> onConnectUserLastQueryResult { get; set; }
+        private readonly MiniTicketV2Dao _miniTicketV2Dao;
+        private readonly IConfiguration _config;
+        private readonly System.Threading.Timer timer;
+        private readonly IHubContext<MainFormResultHub> _hubContext;
+        private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds (1000);
+        private readonly DefaultContractResolver contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () };
+        public TicketService (IConfiguration config, IHubContext<MainFormResultHub> hubContext)
         {
             _config = config;
-
+            _hubContext = hubContext;
+            onConnectUserParams = new Dictionary<string, TicketsQueryParameters> ();
+            onConnectUserLastQueryResult = new Dictionary<string, List<StakePlaceTicket>> ();
             var APPLICATION_NAME = _config["ApplicationName"];
             var connectionString = _config["MongoTicketsStatusConnectionString"];
             var mongoDbId = $"{Environment.UserName}@{Environment.MachineName}@{Helpers.GetLocalIPAddress()}";
 
-            _miniTicketV2Dao = MiniTicketV2Dao.CreateInstance(connectionString,
+            _miniTicketV2Dao = MiniTicketV2Dao.CreateInstance (connectionString,
                 $"{mongoDbId}@MiniTicketV2Dao@TicketsBll@{APPLICATION_NAME}");
+
+            // timer = new System.Threading.Timer (onTimerHandler, null, BroadcastInterval, BroadcastInterval);
+        }
+
+        private void onTimerHandler (object state)
+        {
+            try
+            {
+                Parallel.ForEach (onConnectUserParams, async item =>
+                {
+                    var conneciontId = item.Key;
+                    var queryParams = item.Value;
+                    var response = GetTicketResponse (conneciontId, GetTickets (queryParams));
+                    await _hubContext
+                        .Clients
+                        .Client (conneciontId)
+                        .SendAsync (
+                            "updateResultData",
+                            JsonConvert.SerializeObject (response, new JsonSerializerSettings { ContractResolver = contractResolver })
+                        );
+                });
+            }
+            catch (Exception ex) { }
         }
 
         public TicketsQueryParameters GetTicketParameters (TicketRequest request)
@@ -229,20 +271,43 @@ namespace stake_place_web.Service
 
             #endregion
 
+            result.UserLevels = request.UserLevels;
+
+            result.ConnectionId = request.ConnectionId;
+
+            if (!string.IsNullOrWhiteSpace (request.ConnectionId))
+            {
+                if (onConnectUserParams.TryGetValue (request.ConnectionId, out var outValue))
+                {
+                    onConnectUserParams[request.ConnectionId] = result;
+                }
+                else
+                {
+                    onConnectUserParams.Add (request.ConnectionId, result);
+                }
+            }
+
             return result;
         }
 
-        public List<StakePlaceTicket> GetTickets (TicketsQueryParameters _ticketsQueryParameters, List<string> userLevels)
+        public List<StakePlaceTicket> GetTickets (TicketsQueryParameters _ticketsQueryParameters)
         {
             var stakePlaceTickets = new List<StakePlaceTicket> ();
-            var fieldsAcl = new FieldsAcl (userLevels);
+            var fieldsAcl = new FieldsAcl (_ticketsQueryParameters.UserLevels);
             var miniTickets = QueryTickets (_ticketsQueryParameters);
             foreach (var miniTicket in miniTickets)
             {
                 var stakePlaceTicket = new StakePlaceTicket (miniTicket, fieldsAcl);
                 stakePlaceTickets.Add (stakePlaceTicket);
             }
+            onConnectUserLastQueryResult[_ticketsQueryParameters.ConnectionId] = stakePlaceTickets;
             return stakePlaceTickets;
+        }
+
+        public TicketResponse GetTicketResponse (string conneciontId, List<StakePlaceTicket> tickets)
+        {
+            var added = tickets.Except (onConnectUserLastQueryResult[conneciontId]).Count ();
+            return new TicketResponse (added, tickets);
         }
 
         private IEnumerable<MiniTicketV2> QueryTickets (TicketsQueryParameters ticketsQueryParameters)
@@ -268,7 +333,7 @@ namespace stake_place_web.Service
                 .Project<MiniTicketV2> (projection)
                 .Sort (sort)
                 .Limit (ticketsQueryParameters.MaxRecords)
-                .ToCursor (new CancellationTokenSource().Token))
+                .ToCursor (new CancellationTokenSource ().Token))
             {
                 while (cursor.MoveNext ())
                 {

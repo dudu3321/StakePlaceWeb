@@ -13,8 +13,8 @@ namespace stake_place_web.Entities.Ticket
         public static readonly List<string> PendingAndAcceptedStatusList = new List<string> { "D", "X", "N", "A", "S" };
         public static readonly List<string> PendingStatusList = new List<string> { "D", "X" };
         public static readonly List<string> AcceptedStatusList = new List<string> { "N", "A", "S" };
-
-        public DateTime? LastQueryTime { get; set; }
+        public string ConnectionId { get; set; }
+        public List<string> UserLevels { get; set; }
         public Views View { get; set; }
         public Markets Market { get; set; }
         public Records Record { get; set; }
@@ -32,7 +32,7 @@ namespace stake_place_web.Entities.Ticket
         public Tickets Ticket { get; set; }
         public Status Status { get; set; }
         public List<int?> MatchCodes { get; set; }
-
+        public String TransDate { get; set; }
         public int LastSocTransIdFound { get; set; } = 0;
         public int LastSocTransTradeInIdFound { get; set; } = 0;
 
@@ -74,16 +74,40 @@ namespace stake_place_web.Entities.Ticket
             Ticket = Tickets.All;
             Status = Status.All;
             MatchCodes = new List<int?> ();
-
+            TransDate = string.Empty;
             _filters = new List<FilterDefinition<MiniTicketV2>> ();
+            UserLevels = new List<string> ();
         }
+
+        public TicketsQueryParameters DeepCopy ()
+        {
+                TicketsQueryParameters deepcopyTicketsQueryParameters = new TicketsQueryParameters();
+            deepcopyTicketsQueryParameters.View = this.View;
+            deepcopyTicketsQueryParameters.Market =this.Market;
+            deepcopyTicketsQueryParameters.Record = this.Record;
+            deepcopyTicketsQueryParameters.MaxRecords = this.MaxRecords;
+            deepcopyTicketsQueryParameters.Amount = this.Amount;
+            deepcopyTicketsQueryParameters.Account = this.Account;
+            deepcopyTicketsQueryParameters.Ip = this.Ip;
+            deepcopyTicketsQueryParameters.Sport = this.Sport;
+            deepcopyTicketsQueryParameters.Transaction = this.Transaction;
+            deepcopyTicketsQueryParameters.VipType = this.VipType;
+            deepcopyTicketsQueryParameters.Special =this.Special;
+            deepcopyTicketsQueryParameters.Ticket = this.Ticket;
+            deepcopyTicketsQueryParameters.Status = this.Status;
+            deepcopyTicketsQueryParameters.MatchCodes =this.MatchCodes;
+            deepcopyTicketsQueryParameters.TransDate = this.TransDate;
+            deepcopyTicketsQueryParameters.UserLevels = this.UserLevels;
+            deepcopyTicketsQueryParameters.ConnectionId = this.ConnectionId;
+            return deepcopyTicketsQueryParameters;
+        }
+
 
         public List<FilterDefinition<MiniTicketV2>> GetMongoDbFilters ()
         {
             _filters.Clear ();
 
             // SetIdsConditions();
-            SetUpdateTimeConditions ();
             SetViewConditions ();
             SetMarketConditions ();
             SetAmountConditions ();
@@ -95,19 +119,8 @@ namespace stake_place_web.Entities.Ticket
             SetSpecialConditions ();
             SetStatusConditions ();
             SetTicketConditions ();
-
+            SetTransDate ();
             return _filters;
-        }
-
-        private void SetUpdateTimeConditions ()
-        {
-            if (LastQueryTime != null)
-            {
-                _filters.Add (Builders<MiniTicketV2>
-                    .Filter
-                    .Gt ("Date", new [] { LastQueryTime })
-                );
-            }
         }
 
         private void SetIdsConditions ()
@@ -439,6 +452,14 @@ namespace stake_place_web.Entities.Ticket
                 case Markets.RunningAndToday:
                     _filters.Add (Builders<MiniTicketV2>.Filter.Where (v => v.IsRun || v.WorkingDate == workingDate));
                     break;
+            }
+        }
+
+        private void SetTransDate ()
+        {
+            if (!string.IsNullOrWhiteSpace (TransDate))
+            {
+                _filters.Add (Builders<MiniTicketV2>.Filter.Gt (v => v.TransDate, TransDate));
             }
         }
     }

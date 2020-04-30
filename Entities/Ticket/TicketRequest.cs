@@ -5,6 +5,7 @@ namespace stake_place_web.Entities.Ticket
 {
     public class TicketRequest
     {
+        public string ConnectionId { get; set; }
         public List<int?> MatchCodes { get; set; }
         public List<string> UserLevels { get; set; }
         public string Amount { get; set; }
