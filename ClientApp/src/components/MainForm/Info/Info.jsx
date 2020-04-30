@@ -3,9 +3,12 @@ import { connect } from 'react-redux'
 import * as moment from 'moment'
 import './Info.styles.scss';
 
+//每秒從redux status內撈resultDetailData
+//resultDetailData由ResultData component更新
 class Info extends PureComponent {
-  componentDidMount = () => {
-    this.intervalId = setInterval(() => { this.forceUpdate(); }, 10000);
+  constructor(props) {
+    super(props)
+    this.intervalId = setInterval(() => { this.forceUpdate(); }, 1000);
   }
 
   componentWillUnmount = () => {
@@ -31,7 +34,7 @@ const mapStateToProps = (state, props) => {
   const { tabIndex } = props;
   let resultData = Object.assign({}, state.resultData);
   if (Object.keys(resultData).length > 0) {
-    if (typeof resultData.resultDetailData[tabIndex] !== 'undefined') {
+    if (!!resultData.resultDetailData[tabIndex]) {
       resultData = resultData.resultDetailData[tabIndex];
     }
   }

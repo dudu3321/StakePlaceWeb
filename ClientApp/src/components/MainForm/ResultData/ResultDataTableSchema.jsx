@@ -6,6 +6,10 @@ export const tableSchema = [
         title: 'Account',
         dataIndex: 'account',
         key: 'account',
+        render: (text, record) => {
+            const { accountForeColor, accountBackColor } = record;
+            return <span style={getFontColor(accountForeColor), {backgroundColor: getTagStyle(accountBackColor)}}>{text}</span>
+        }
     },
     {
         title: 'League',
@@ -13,7 +17,7 @@ export const tableSchema = [
         key: 'league',
         render: (text, record) => {
             const { leagueColor } = record;
-            return <span style={{ color: `rgb(${leagueColor.r},${leagueColor.g},${leagueColor.b})` }}>{text}</span>
+            return <span style={getFontColor(leagueColor)}>{text}</span>
         }
     },
     {
@@ -22,7 +26,7 @@ export const tableSchema = [
         key: 'home',
         render: (text, record) => {
             const { homeColor } = record;
-            return <span style={{ color: `rgb(${homeColor.r},${homeColor.g},${homeColor.b})` }}>{text}</span>
+            return <span style={getFontColor(homeColor)}>{text}</span>
         }
     },
     {
@@ -31,7 +35,7 @@ export const tableSchema = [
         key: 'away',
         render: (text, record) => {
             const { awayColor } = record;
-            return <span style={{ color: `rgb(${awayColor.r},${awayColor.g},${awayColor.b})` }}>{text}</span>
+            return <span style={getFontColor(awayColor)}>{text}</span>
         }
     },
     {
@@ -40,7 +44,7 @@ export const tableSchema = [
         key: 'transType',
         render: (text, record) => {
             const { transTypeColor } = record;
-            return <Tag color={`rgb(${transTypeColor.r},${transTypeColor.g},${transTypeColor.b})`}>{text}</Tag>
+            return <Tag color={getTagStyle(transTypeColor)}>{text}</Tag>
         }
     },
     {
@@ -54,7 +58,7 @@ export const tableSchema = [
         key: 'hdp',
         render: (text, record) => {
             const { hdpColor } = record;
-            return <span style={{ color: `rgba(${hdpColor.r},${hdpColor.g},${hdpColor.b},${hdpColor.a})` }}>{text}</span>
+            return <span style={getFontColor(hdpColor)}>{text}</span>
         }
     },
     {
@@ -63,7 +67,7 @@ export const tableSchema = [
         key: 'mmrOdds',
         render: (text, record) => {
             const { mmrOddsColor } = record;
-            return <span style={{ color: `rgba(${mmrOddsColor.r},${mmrOddsColor.g},${mmrOddsColor.b},${mmrOddsColor.a})` }}>{text}</span>
+            return <span style={getFontColor(mmrOddsColor)}>{text}</span>
         }
     },
     {
@@ -72,7 +76,7 @@ export const tableSchema = [
         key: 'odds',
         render: (text, record) => {
             const { oddsColor } = record;
-            return <span style={{ color: `rgba(${oddsColor.r},${oddsColor.g},${oddsColor.b},${oddsColor.a})` }}>{text}</span>
+            return <span style={getFontColor(oddsColor)}>{text}</span>
         }
     },
     {
@@ -81,7 +85,7 @@ export const tableSchema = [
         key: 'myOdds',
         render: (text, record) => {
             const { myOddsColor } = record;
-            return <span style={{ color: `rgba(${myOddsColor.r},${myOddsColor.g},${myOddsColor.b},${myOddsColor.a})` }}>{text}</span>
+            return <span style={getFontColor(myOddsColor)}>{text}</span>
         }
     },
     {
@@ -95,7 +99,7 @@ export const tableSchema = [
         key: 'dangerStatus',
         render: (text, record) => {
             const { dangerStatusColor } = record;
-            return <Tag color={`rgb(${dangerStatusColor.r},${dangerStatusColor.g},${dangerStatusColor.b})`}>{text}</Tag>
+            return <Tag color={getTagStyle(dangerStatusColor)}>{text}</Tag>
         }
     },
     {
@@ -123,7 +127,7 @@ export const tableSchema = [
         key: 'refNo',
         render: (text, record) => {
             const { refNoColor } = record;
-            return <span style={{ color: `rgba(${refNoColor.r},${refNoColor.g},${refNoColor.b},${refNoColor.a})` }}>{text}</span>
+            return <span style={getFontColor(refNoColor)}>{text}</span>
         }
     },
     {
@@ -142,3 +146,28 @@ export const tableSchema = [
         key: 'matchCode',
     }
 ];
+
+const getFontColor = (colorObj) => {
+    switch (typeof colorObj) {
+        case 'object':
+            if (colorObj.r === 0 && colorObj.g === 0 && colorObj.b === 0 && colorObj.a === 0) {
+                return { color: 'Black' };
+            }
+            return { color: `rgba(${colorObj.r},${colorObj.g},${colorObj.b},${colorObj.a})` };
+        case 'string':
+            return { color: colorObj };
+        default:
+            return { color: 'Black' };
+    }
+}
+
+const getTagStyle = (colorObj) => {
+    switch (typeof colorObj) {
+        case 'object':
+            return `rgb(${colorObj.r},${colorObj.g},${colorObj.b})`;
+        case 'string':
+            return colorObj;
+        default:
+            return 'Black';
+    }
+}

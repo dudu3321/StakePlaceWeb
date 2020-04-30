@@ -1,10 +1,13 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using stake_place_web.Hubs;
 using stake_place_web.Service;
 namespace stake_place_web
 {
@@ -31,15 +34,15 @@ namespace stake_place_web
             {
                 configuration.RootPath = "ClientApp/build";
             });
-
+            services.AddSignalR();
             services.AddScoped<ILoginService, LoginService> ();
             services.AddScoped<IFilterService, FilterService> ();
             services.AddScoped<IUserService, UserService> ();
-            services.AddScoped<ITicketService, TicketService> ();
+            services.AddSingleton<ITicketService, TicketService> ();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure (IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure (IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider, IHostApplicationLifetime hostApplicationLifetime)
         {
             if (env.IsDevelopment ())
             {
@@ -51,7 +54,6 @@ namespace stake_place_web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts ();
             }
-
             app.UseHttpsRedirection ();
             app.UseStaticFiles ();
             app.UseSpaStaticFiles ();
@@ -63,6 +65,7 @@ namespace stake_place_web
                 endpoints.MapControllerRoute (
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<MainFormResultHub>("/MainFormResultHub");
             });
 
             app.UseSpa (spa =>
