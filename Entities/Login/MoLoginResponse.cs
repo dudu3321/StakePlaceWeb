@@ -20,7 +20,5 @@ namespace stake_place_web.Entities.Login
         public List<int> MatchCodes { get; set; }
         public List<string> UserLevels { get; set; }
         public Views View { get; set; }
-        public bool UpdateFinished { get; set; }
-        public DateTime CreateTime { get; set; }
     }
 }

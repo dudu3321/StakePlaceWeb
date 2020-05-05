@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import * as signalR from "@microsoft/signalr";
 
 export default function useHubConnection(hubUrl) {
@@ -6,14 +6,14 @@ export default function useHubConnection(hubUrl) {
 
     useEffect(() => {
         if (hubConnection) {
-            setHubConnection(createConnection());
+            setHubConnection(createConnection(hubUrl));
         }
     });
 
     return hubConnection;
 }
 
-const createConnection = () => {
+const createConnection = (hubUrl) => {
     const hubConnect = new signalR.HubConnectionBuilder()
         .withUrl(hubUrl)
         .configureLogging(signalR.LogLevel.Information)

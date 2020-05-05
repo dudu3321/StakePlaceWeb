@@ -34,10 +34,10 @@ namespace stake_place_web.Service
         private readonly MiniTicketV2Dao _miniTicketV2Dao;
         private readonly IConfiguration _config;
         private readonly System.Threading.Timer timer;
-        private readonly IHubContext<MainFormResultHub> _hubContext;
+        private readonly IHubContext<TicketConnectionHub> _hubContext;
         private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds (1000);
         private readonly DefaultContractResolver contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () };
-        public TicketService (IConfiguration config, IHubContext<MainFormResultHub> hubContext)
+        public TicketService (IConfiguration config, IHubContext<TicketConnectionHub> hubContext)
         {
             _config = config;
             _hubContext = hubContext;

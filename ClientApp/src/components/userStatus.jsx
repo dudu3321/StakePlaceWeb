@@ -1,12 +1,8 @@
 import React from 'react'
-import useUserHub from './useHubConnection'
-export const userStatus = () => {
-    const hubConnection = useHubConnection('/ConnectionHub');
-
+export const userStatus = (hubConnection) => {
     hubConnection.on('userLogout', ()=>{
         return logout;
     });
-
 
     if (!useCookies(['userLevels']) && window.location.pathname !== '/') {
         return logout;

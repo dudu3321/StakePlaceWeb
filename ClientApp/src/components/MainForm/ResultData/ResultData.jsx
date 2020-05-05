@@ -16,7 +16,7 @@ class ResultData extends PureComponent {
   constructor(props) {
     super(props);
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('/ConnectionHub')
+      .withUrl('/TicketConnectionHub')
       .configureLogging(signalR.LogLevel.Information)
       .build();
     this.hubConnection

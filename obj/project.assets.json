@@ -7545,17 +7545,17 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj",
+      "projectUniqueName": "c:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj",
       "projectName": "stake-place-web",
-      "projectPath": "C:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj",
+      "projectPath": "c:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj",
       "packagesPath": "C:\\Users\\kervin.tsai\\.nuget\\packages\\",
-      "outputPath": "C:\\Kervin\\project\\stake-place-web\\obj\\",
+      "outputPath": "c:\\Kervin\\project\\stake-place-web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Kervin\\project\\stake-place-web\\NuGet.Config",
+        "c:\\Kervin\\project\\stake-place-web\\NuGet.Config",
         "C:\\Users\\kervin.tsai\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -7563,8 +7563,8 @@
         "netcoreapp3.1"
       ],
       "sources": {
-        "C:\\Kervin\\project\\stake-place-web\\References": {},
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "c:\\Kervin\\project\\stake-place-web\\References": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

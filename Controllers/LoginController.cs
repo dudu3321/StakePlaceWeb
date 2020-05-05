@@ -16,35 +16,5 @@ namespace stake_place_web.Controllers
         {
             _loginService = loginService;
         }
-
-        [HttpPost]
-        public MoLoginResponse POST ([FromBody] MoLoginRequest request)
-        {
-            var response = new MoLoginResponse ();
-            try
-            {
-                _loginService.Login (request.MoLogin, request.Password);
-
-                while (true)
-                {
-                    response = _loginService.pendingMoLogin[request.MoLogin];
-                    if (response.UpdateFinished)
-                    {
-                        break;
-                    }
-                    if ((DateTime.Now - response.CreateTime).TotalSeconds > 2)
-                    {
-                        _loginService.ReceivedInvoke (MoLoginStatus.Error, request.MoLogin, "", "Mo Service response timeout.");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                response.MoLoginStatus = MoLoginStatus.Error;
-                response.Title = "Exception Error!";
-                response.Message = ex.ToString();
-            }
-            return response;
-        }
     }
 }
