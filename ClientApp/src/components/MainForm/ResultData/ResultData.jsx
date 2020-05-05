@@ -16,17 +16,17 @@ class ResultData extends PureComponent {
   constructor(props) {
     super(props);
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('/MainFormResultHub')
+      .withUrl('/ConnectionHub')
       .configureLogging(signalR.LogLevel.Information)
       .build();
     this.hubConnection
       .start()
       .then(() => {
-        console.log('Connection started!');
+       console.log('Connection started!');
         this.connectionId = this.hubConnection.connectionId;
         this.getResultData();
         this.intervalId = setInterval(() => this.intervalEventHandle(), 1000);
-      })
+      }) 
       .catch(err => console.log('Error while establishing connection :('));
     this.hubConnection.on('updateResultData', (result) => {
       console.log('data received!');

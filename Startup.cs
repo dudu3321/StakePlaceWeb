@@ -65,7 +65,7 @@ namespace stake_place_web
                 endpoints.MapControllerRoute (
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<MainFormResultHub>("/MainFormResultHub");
+                endpoints.MapHub<MainFormResultHub>("/ConnectionHub");
             });
 
             app.UseSpa (spa =>
