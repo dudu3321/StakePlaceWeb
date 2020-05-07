@@ -8,21 +8,21 @@ import { Provider } from 'react-redux'
 import filterApp from './redux/reducers/main'
 import './custom.css';
 import 'antd/dist/antd.css';
-import { userStatus } from './components/userStatus'
-import useHubConnection from './components/useHubConnection'
-
+import UserStatus from './components/UserStatus'
+import { useHubConnection } from './components/useHubConnection'
 
 const App = () => {
   let store = createStore(filterApp);
-  const [hubConnection] = useHubConnection('UserConnectionHub');
+  const hubConnection = useHubConnection('UserConnectionHub');
+
   return (
-    <div>
-      <userStatus hubConnection={hubConnection}></userStatus>
+    <div style={{height:'100%'}}>
+      <UserStatus hubConnection={hubConnection}></UserStatus>
       <Router>
         <Switch>
           <CookiesProvider>
             <Provider store={store}>
-              <Route exact path="/" component={Login}  hubConnection={hubConnection}></Route>
+              <Route exact path="/" component={() => <Login hubConnection={hubConnection}/>} ></Route>
               <Route path="/Main" component={Main}></Route>
             </Provider>
           </CookiesProvider>

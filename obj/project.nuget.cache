@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "eiTJKgHXazBg/p/L16hj8/0uzVAcLumW5uFzmjtG/Si+ocCJRcRdFuArBLD5lzPUxb4f82yteeWFg3s9DWnEBw==",
+  "dgSpecHash": "5avkD0v8AUMfRM9qxfJ3Uj6gFofB9fUsSI0YEJWA1PtodMF9Djsk2EI7N1ZsAMmWFLuuoCtSUzo1PNiPprjO3Q==",
   "success": true,
-  "projectFilePath": "c:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj",
+  "projectFilePath": "C:\\Kervin\\project\\stake-place-web\\stake-place-web.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kervin.tsai\\.nuget\\packages\\communalclass\\1.0.0\\communalclass.1.0.0.nupkg.sha512",
     "C:\\Users\\kervin.tsai\\.nuget\\packages\\crc32c.net\\1.0.5\\crc32c.net.1.0.5.nupkg.sha512",

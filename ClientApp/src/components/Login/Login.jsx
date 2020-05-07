@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Input, Button, Checkbox, Alert } from 'antd'
+import { Input, Button, Checkbox, Alert, Spin } from 'antd'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { instanceOf } from 'prop-types'
 import { withCookies, Cookies } from 'react-cookie'
@@ -8,20 +8,28 @@ import './Login.styles.scss';
 
 function Login(props) {
   const { cookies, hubConnection } = props;
-  const [moLoginResponse, setMoLoginResponse] = useState();  
+  const [moLoginResponse, setMoLoginResponse] = useState();
   const [moLogin, setMoLogin] = useState(cookies.get('moLogin'));
   const [password, setPassword] = useState(cookies.get('password'));
   const [rememberMe, setRememberMe] = useState(cookies.get('moLogin') ? true : false);
-  
+  const [openSpin, setOpenSpin] = useState(false);
 
   const loginOnClick = async () => {
-    hubConnection.on('userLogin', (response)=>{
-      let jsonResponse = response.json();
-      if(jsonResponse.moLoginStatus === 1){
-        setLoginCookie(jsonResponse);
-      }
-      setMoLoginResponse(jsonResponse);
-    });
+    hubConnection
+      .invoke('UserLogin', {
+        ConnectionId: hubConnection.connectionId,
+        MoLogin: moLogin,
+        Password: password
+      })
+      .catch((err) => console.error(err.toString()));
+
+    hubConnection
+      .on('userLogin', (response) => {
+        if (response.moLoginStatus === 1) {
+          setLoginCookie(response);
+        }
+        setMoLoginResponse(response);
+      });
   };
 
   const setLoginCookie = (result) => {
@@ -57,7 +65,7 @@ function Login(props) {
   };
 
   let errorAlert;
-  if (moLoginResponse) {
+  if (!!moLoginResponse) {
     if (moLoginResponse.moLoginStatus === 1) {
       return <Redirect to='/Main'></Redirect>
     }
@@ -78,6 +86,7 @@ function Login(props) {
   return (
     <div className="content">
       <div className="container">
+        <LoadingSpin openSpin={openSpin}></LoadingSpin>
         {errorAlert}
         <div className="container-box">
           <Input
@@ -119,6 +128,16 @@ function Login(props) {
     </div>
   );
 }
+
+const LoadingSpin = (props) => {
+  const { openSpin } = props;
+  if(openSpin){
+    return <Spin tip='Loading...'></Spin>;
+  }
+  return <div></div>;
+}
+
+
 Login.propTypes = {
   cookies: instanceOf(Cookies).isRequired
 };

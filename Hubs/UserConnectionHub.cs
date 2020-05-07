@@ -15,12 +15,12 @@ namespace stake_place_web.Hubs
         }
 
         public override Task OnDisconnectedAsync(Exception exception){
-            // _ticketService.onConnectUserParams.Remove(Context.ConnectionId);
+            _loginService.userConnectionId.Remove(Context.ConnectionId);
             return base.OnDisconnectedAsync(exception);
         }
 
-        public void userLogin(MoLoginRequest request){
-
+        public void UserLogin(MoLoginRequest request){
+            _loginService.DoLogin(request);
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CMDKClass;
 using CommunalClass;
 using DataStruct.AdminOperator;
@@ -24,7 +25,7 @@ namespace stake_place_web.Service
             get;
             set;
         }
-        void DoLogin (string moLogin, string password, string conneciontId);
+        void DoLogin (MoLoginRequest request);
     }
 
     public class LoginService : ILoginService
@@ -35,6 +36,8 @@ namespace stake_place_web.Service
         private readonly MiniUserMatchIdsV2Dao _miniUserMatchIdsV2Dao;
         private readonly IHubContext<UserConnectionHub> _hubContext;
         public Dictionary<string, string> userConnectionId { get; set; }
+
+        private List<MoLoginResponse> userResponse { get; set; }
         private readonly DefaultContractResolver contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () };
         public LoginService (IConfiguration config, IHubContext<UserConnectionHub> hubContext)
         {
@@ -58,21 +61,31 @@ namespace stake_place_web.Service
                 $"{mongoDbId}@MiniUserMatchIdsV2Dao@MOClient@{APPLICATION_NAME}");
 
             userConnectionId = new Dictionary<string, string> ();
+            userResponse = new List<MoLoginResponse> ();
         }
 
-        public void DoLogin (string moLogin, string password, string conneciontId)
+        public void DoLogin (MoLoginRequest request)
         {
-            var encryptedPassword = stringCoding.GetMD5 (password);
+            var encryptedPassword = stringCoding.GetMD5 (request.Password);
             var machineName = Environment.MachineName;
             var userName = Environment.UserName;
             var loginType = (int) MoLoginType.Stakeplace;
-            var @params = $"{moLogin}#{password}#{encryptedPassword}#{machineName}#{userName}#{loginType}";
+            var @params = $"{request.MoLogin}#{request.Password}#{encryptedPassword}#{machineName}#{userName}#{loginType}";
 
-            userConnectionId.TryAdd (moLogin, conneciontId);
+            userConnectionId.TryAdd (request.MoLogin, request.ConnectionId);
+
+            userResponse.Add (
+                new MoLoginResponse ()
+                {
+                    MoLogin = request.MoLogin,
+                    EncryptedPassword = encryptedPassword
+                }
+            );
 
             using (var stream = StreamConvert.StringToStream (@params, false))
             {
                 _tcpClient.SendData (2, stream);
+                Console.WriteLine ($"Mo service message send! params={@params}");
             }
         }
 
@@ -92,21 +105,21 @@ namespace stake_place_web.Service
                     method = "userLogin";
                     break;
             }
-
+            Console.WriteLine ($"Message to client send! mologin={moLoginResponse.MoLogin}, status={status}");
             await _hubContext
                 .Clients
                 .Client (conneciontId)
                 .SendAsync (
                     method,
-                    JsonConvert.SerializeObject (moLoginResponse, new JsonSerializerSettings { ContractResolver = contractResolver })
+                    moLoginResponse
                 );
         }
         #region Private Methods
 
-        private void GetMeta (string moLogin, MoLoginResponse moLoginResponse)
+        private void GetMeta (MoLoginResponse moLoginResponse)
         {
             MiniUserV2 miniUser;
-            if (_miniUserV2Dao.TryQuery (moLogin, out miniUser))
+            if (_miniUserV2Dao.TryQuery (moLoginResponse.MoLogin, out miniUser))
             {
                 if (miniUser.LockStatus == 0)
                 {
@@ -114,7 +127,7 @@ namespace stake_place_web.Service
                     {
                         if (miniUser.IsStakeplaceLogin)
                         {
-                            if (moLogin.StartsWith ("pascal", StringComparison.OrdinalIgnoreCase))
+                            if (moLoginResponse.MoLogin.StartsWith ("pascal", StringComparison.OrdinalIgnoreCase))
                             {
                                 moLoginResponse.View = Views.AllMatches;
                             }
@@ -123,7 +136,7 @@ namespace stake_place_web.Service
                                 moLoginResponse.View = miniUser.CanViewOnlyMOMatches ? Views.OnlyMOMatches : Views.AllMatches;
                             }
                             MiniUserMatchIdsV2 miniUserMatchIds;
-                            if (_miniUserMatchIdsV2Dao.TryQueryOne (moLogin, out miniUserMatchIds))
+                            if (_miniUserMatchIdsV2Dao.TryQueryOne (moLoginResponse.MoLogin, out miniUserMatchIds))
                             {
                                 moLoginResponse.MatchCodes.Clear ();
                                 moLoginResponse.MatchCodes.AddRange (miniUserMatchIds.MatchIds);
@@ -163,43 +176,51 @@ namespace stake_place_web.Service
             {
                 var quitMesage = string.Empty;
                 var response = StreamConvert.StreamToString (data, false, true);
+                Console.WriteLine ($"Mo service message received! command={(MoLoginStatus) tid} response={response}");
                 string[] loginResult = response.Split ('#');
                 var moLogin = loginResult[0];
-                var moLoginResponse = new MoLoginResponse ();
-                moLoginResponse.MoLogin = moLogin;
                 var command = (MoLoginStatus) tid;
+                switch (tid)
+                {
+                    case -2:
+                        ReceivedInvoke (new MoLoginResponse(){MoLogin=moLogin}, command, "", "You have been logged out by the system due to multiple login. " +
+                            "This session will be terminated!");
+                       return;
+                }
+
+                var moLoginResponse = userResponse.FirstOrDefault (x => x.MoLogin == moLogin);
+                if (moLoginResponse == null) return;
+                else
+                {
+                    userResponse.Remove (moLoginResponse);
+                }
+                
                 switch (command)
                 {
                     case MoLoginStatus.Success:
+                        if (loginResult.Length < 4)
                         {
-                            if (loginResult.Length < 4)
-                            {
-                                ReceivedInvoke (moLoginResponse, MoLoginStatus.Error, "MOService Error Message",
-                                    "An error happened during login. Error message below " +
-                                    $"{Environment.NewLine} msg={response}");
-                                break;
-                            }
-
-                            var userLevels = loginResult[1].Split (new []
-                            {
-                                ','
-                            }, StringSplitOptions.RemoveEmptyEntries);
-
-                            if (userLevels.Length > 0)
-                            {
-                                moLoginResponse.UserLevels.Clear ();
-                                moLoginResponse.UserLevels.AddRange (userLevels);
-                                GetMeta (moLogin, moLoginResponse);
-                                ReceivedInvoke (moLoginResponse, command, "", "");
-                                break;
-                            }
-
-                            var errorMessage = loginResult[2];
-                            ReceivedInvoke (moLoginResponse, command, "MOService Error Message",
+                            ReceivedInvoke (moLoginResponse, MoLoginStatus.Error, "MOService Error Message",
                                 "An error happened during login. Error message below " +
-                                $"{Environment.NewLine} msg={errorMessage}");
+                                $"{Environment.NewLine} msg={response}");
                             break;
                         }
+
+                        var userLevels = loginResult[1].Split (',', StringSplitOptions.RemoveEmptyEntries);
+
+                        if (userLevels.Length > 0)
+                        {
+                            moLoginResponse.UserLevels.Clear ();
+                            moLoginResponse.UserLevels.AddRange (userLevels);
+                            GetMeta (moLoginResponse);
+                            break;
+                        }
+
+                        var errorMessage = loginResult[2];
+                        ReceivedInvoke (moLoginResponse, command, "MOService Error Message",
+                            "An error happened during login. Error message below " +
+                            $"{Environment.NewLine} msg={errorMessage}");
+                        break;
                     case MoLoginStatus.WrongPassword:
                         ReceivedInvoke (moLoginResponse, command, "MOService Credentials errors",
                             "Your password is incorrect.");
@@ -220,10 +241,6 @@ namespace stake_place_web.Service
                         ReceivedInvoke (moLoginResponse, command, "MOService Credentials errors",
                             "The login request to MOService was not well formatted. " +
                             "Please contact IT NOC");
-                        break;
-                    case MoLoginStatus.KickOut:
-                        ReceivedInvoke (moLoginResponse, command, "", "You have been logged out by the system due to multiple login. " +
-                            "This session will be terminated!");
                         break;
                     case MoLoginStatus.NoResponse:
                         ReceivedInvoke (moLoginResponse, command, "MOService Notification", "The server is not responding, please try again later!");

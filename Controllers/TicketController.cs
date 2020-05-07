@@ -21,6 +21,6 @@ namespace stake_place_web.Controllers
         {
             var ticketParameters = _ticketService.GetTicketParameters (request);
             return _ticketService.GetTicketResponse (request.ConnectionId, _ticketService.GetTickets (ticketParameters));
-        }
+        } 
     }
 }
