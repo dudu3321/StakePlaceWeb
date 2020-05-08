@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import { Table } from 'antd'
 import { connect } from 'react-redux'
 import { setResultData, setQueryParam } from '../../../redux/actions/main/index'
@@ -12,7 +12,7 @@ import moment from 'moment'
 //資料更新方式
 //1. 開啟及條件修改 -> WebApi
 //2. 每秒資料有更改時Server會以WebSocket推送至Client
-class ResultData extends PureComponent {
+class ResultData extends Component {
   constructor(props) {
     super(props);
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -114,6 +114,11 @@ class ResultData extends PureComponent {
     let dateTransDate = moment(transDate);
     let diff = moment.duration(dateNow.diff(dateTransDate));
     return `${subTransDate} [+${diff._data.minutes}m ${diff._data.seconds}s]`;
+  }
+c
+
+  componentWillUnmount = () => {
+    this.hubConnection.stop();
   }
 
 

@@ -83,7 +83,7 @@ class Filter extends PureComponent {
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_3" value={queryParam.specialLines ? queryParam.specialLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('specialLines')}</Select>
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={queryParam.ticketLines ? queryParam.ticketLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('ticketLines')}</Select>
         <Select className="selector_1" dropdownMatchSelectWidth="false" dropdownClassName="options_1" value={queryParam.statusLines ? queryParam.statusLines.description : ''} onChange={this.selectHandleChange}>{this.getSelectOptions('statusLines')}</Select>
-        <Checkbox onChange={this.checkboxHandleChange} checked={queryParam.scrollEnd}>Scroll to end</Checkbox>
+        {/* <Checkbox onChange={this.checkboxHandleChange} checked={queryParam.scrollEnd}>Scroll to end</Checkbox> */}
       </div >
     )
   }

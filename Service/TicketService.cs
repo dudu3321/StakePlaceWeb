@@ -50,7 +50,7 @@ namespace stake_place_web.Service
             _miniTicketV2Dao = MiniTicketV2Dao.CreateInstance (connectionString,
                 $"{mongoDbId}@MiniTicketV2Dao@TicketsBll@{APPLICATION_NAME}");
 
-            // timer = new System.Threading.Timer (onTimerHandler, null, BroadcastInterval, BroadcastInterval);
+            timer = new System.Threading.Timer (onTimerHandler, null, BroadcastInterval, BroadcastInterval);
         }
 
         private void onTimerHandler (object state)
@@ -64,7 +64,7 @@ namespace stake_place_web.Service
                     var queryParams = item.Value;
                     var response = GetTicketResponse (connectionId, GetTickets (queryParams));
                     Console.WriteLine ($"[LOG] connectionId={connectionId}, new ticket count={response.Added}");
-                    if (response.StakePlaceTickets.Count > 0)
+                    if (response.Added > 0)
                     {
                         await _hubContext
                             .Clients

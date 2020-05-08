@@ -15,6 +15,7 @@ namespace stake_place_web.Hubs
         }
 
         public override Task OnDisconnectedAsync(Exception exception){
+            Console.WriteLine($"[LOG] disconnect ConnectionId:{Context.ConnectionId}");
             _ticketService.onConnectUserParams.Remove(Context.ConnectionId);
             return base.OnDisconnectedAsync(exception);
         }
