@@ -85,13 +85,13 @@ namespace stake_place_web.Service
             using (var stream = StreamConvert.StringToStream (@params, false))
             {
                 _tcpClient.SendData (2, stream);
-                Console.WriteLine ($"Mo service message send! params={@params}");
+                Console.WriteLine ($"[LOG] Mo service message send! params={@params}");
             }
         }
 
         private async void ReceivedInvoke (MoLoginResponse moLoginResponse, MoLoginStatus status, string title, string message)
         {
-            var conneciontId = userConnectionId[moLoginResponse.MoLogin];
+            var connectiontId = userConnectionId[moLoginResponse.MoLogin];
             var method = string.Empty;
             moLoginResponse.MoLoginStatus = status;
             moLoginResponse.Title = title;
@@ -105,10 +105,10 @@ namespace stake_place_web.Service
                     method = "userLogin";
                     break;
             }
-            Console.WriteLine ($"Message to client send! mologin={moLoginResponse.MoLogin}, status={status}");
+            Console.WriteLine ($"[LOG] Message to client send! connectionId={connectiontId}, mologin={moLoginResponse.MoLogin}, status={status}");
             await _hubContext
                 .Clients
-                .Client (conneciontId)
+                .Client (connectiontId)
                 .SendAsync (
                     method,
                     moLoginResponse
@@ -175,18 +175,23 @@ namespace stake_place_web.Service
             try
             {
                 var quitMesage = string.Empty;
+
+                
+                if(data.Length == 0) return;
                 var response = StreamConvert.StreamToString (data, false, true);
-                Console.WriteLine ($"Mo service message received! command={(MoLoginStatus) tid} response={response}");
+                Console.WriteLine ($"[LOG] Mo service message received! command={(MoLoginStatus) tid} response={response}");
                 string[] loginResult = response.Split ('#');
                 var moLogin = loginResult[0];
                 var command = (MoLoginStatus) tid;
-                switch (tid)
-                {
-                    case -2:
-                        ReceivedInvoke (new MoLoginResponse(){MoLogin=moLogin}, command, "", "You have been logged out by the system due to multiple login. " +
-                            "This session will be terminated!");
-                       return;
-                }
+
+                ///KickOut 需修改MoService增加回傳值，目前無法作用
+                // switch (tid)
+                // {
+                //     case -2:
+                //         ReceivedInvoke (new MoLoginResponse(){MoLogin=moLogin}, command, "", "You have been logged out by the system due to multiple login. " +
+                //             "This session will be terminated!");
+                //        return;
+                // }
 
                 var moLoginResponse = userResponse.FirstOrDefault (x => x.MoLogin == moLogin);
                 if (moLoginResponse == null) return;

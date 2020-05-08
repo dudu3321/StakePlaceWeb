@@ -15,6 +15,7 @@ const HubState = (props) => {
     const { hubConnection } = props;
     let hubIsConnected = () => hubConnection.ConnectionState === 'Connected' && !!!hubConnection.conectionId;
 
+    
     if (!hubIsConnected) {
         return (
             <Spin tip='Service Connecting...'>

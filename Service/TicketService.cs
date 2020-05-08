@@ -23,7 +23,7 @@ namespace stake_place_web.Service
         Dictionary<string, List<StakePlaceTicket>> onConnectUserLastQueryResult { get; set; }
         TicketsQueryParameters GetTicketParameters (TicketRequest request);
         List<StakePlaceTicket> GetTickets (TicketsQueryParameters _ticketsQueryParameters);
-        TicketResponse GetTicketResponse (string conneciontId, List<StakePlaceTicket> tickets);
+        TicketResponse GetTicketResponse (string connectionId, List<StakePlaceTicket> tickets);
     }
 
     public class TicketService : ITicketService
@@ -56,19 +56,24 @@ namespace stake_place_web.Service
         private void onTimerHandler (object state)
         {
             try
-            {
+            {    
+                Console.WriteLine ($"[LOG] onConnectUserParams={onConnectUserParams.Count}");
                 Parallel.ForEach (onConnectUserParams, async item =>
                 {
-                    var conneciontId = item.Key;
+                    var connectionId = item.Key;
                     var queryParams = item.Value;
-                    var response = GetTicketResponse (conneciontId, GetTickets (queryParams));
-                    await _hubContext
-                        .Clients
-                        .Client (conneciontId)
-                        .SendAsync (
-                            "updateResultData",
-                            JsonConvert.SerializeObject (response, new JsonSerializerSettings { ContractResolver = contractResolver })
-                        );
+                    var response = GetTicketResponse (connectionId, GetTickets (queryParams));
+                    Console.WriteLine ($"[LOG] connectionId={connectionId}, new ticket count={response.Added}");
+                    if (response.StakePlaceTickets.Count > 0)
+                    {
+                        await _hubContext
+                            .Clients
+                            .Client (connectionId)
+                            .SendAsync (
+                                "updateResultData",
+                                JsonConvert.SerializeObject (response, new JsonSerializerSettings { ContractResolver = contractResolver })
+                            );
+                    }
                 });
             }
             catch (Exception ex) { }
@@ -304,9 +309,9 @@ namespace stake_place_web.Service
             return stakePlaceTickets;
         }
 
-        public TicketResponse GetTicketResponse (string conneciontId, List<StakePlaceTicket> tickets)
+        public TicketResponse GetTicketResponse (string connectionId, List<StakePlaceTicket> tickets)
         {
-            var added = tickets.Except (onConnectUserLastQueryResult[conneciontId]).Count ();
+            var added = tickets.Except (onConnectUserLastQueryResult[connectionId]).Count ();
             return new TicketResponse (added, tickets);
         }
 

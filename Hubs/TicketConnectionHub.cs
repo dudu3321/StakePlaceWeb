@@ -18,9 +18,5 @@ namespace stake_place_web.Hubs
             _ticketService.onConnectUserParams.Remove(Context.ConnectionId);
             return base.OnDisconnectedAsync(exception);
         }
-
-        public void userLogin(MoLoginRequest request){
-
-        }
     }
 }
