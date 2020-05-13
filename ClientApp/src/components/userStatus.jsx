@@ -1,21 +1,31 @@
-import React, { Redirect, useReducer } from 'react'
-import { useCookies } from 'react-cookie'
+import React from 'react'
+import { Redirect } from 'react-router'
+import { withCookies } from 'react-cookie'
 import { Spin, Alert } from 'antd'
 
 const UserStatus = (props) => {
+    const { cookies } = props;
     return (
         <div>
             <HubState hubConnection={props.hubConnection}></HubState>
-            <CookieState userLevels={useCookies(['userLevels'])}></CookieState>
+            <CookieState userLevels={cookies.get('userLevels')}></CookieState>
         </div>
     );
 }
+
+
+function Logout() {
+    return (
+        <Redirect to='/'></Redirect>
+    );
+}
+
 
 const HubState = (props) => {
     const { hubConnection } = props;
     let hubIsConnected = () => hubConnection.ConnectionState === 'Connected' && !!!hubConnection.conectionId;
 
-    
+
     if (!hubIsConnected) {
         return (
             <Spin tip='Service Connecting...'>
@@ -25,21 +35,21 @@ const HubState = (props) => {
     }
 
     hubConnection.on('userLogout', () => {
-        return logout;
+        return <Logout />;
     });
 
-    
-    return (<div></div>);
+
+    return <div></div>;
 }
 
 const CookieState = (props) => {
     const { userLevels } = props;
-    if (!userLevels && window.location.pathname !== '/') {
-        return logout;
+    if (!!!userLevels && window.location.pathname !== '/') {
+        return <Logout></Logout>;
     }
     return (<div></div>);
 }
 
-const logout = () => <Redirect to='/'></Redirect>;
 
-export default UserStatus;
+
+export default withCookies(UserStatus);

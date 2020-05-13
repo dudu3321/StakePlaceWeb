@@ -16,19 +16,17 @@ const App = () => {
   const hubConnection = useHubConnection('UserConnectionHub');
 
   return (
-    <div style={{height:'100%'}}>
-      <UserStatus hubConnection={hubConnection}></UserStatus>
-      <Router>
-        <Switch>
-          <CookiesProvider>
-            <Provider store={store}>
-              <Route exact path="/" component={() => <Login hubConnection={hubConnection}/>} ></Route>
-              <Route path="/Main" component={Main}></Route>
-            </Provider>
-          </CookiesProvider>
-        </Switch>
-      </Router>
-    </div>
+    <Router>
+      <Switch>
+        <CookiesProvider>
+          <Provider store={store}>
+            <UserStatus hubConnection={hubConnection}></UserStatus>
+            <Route exact path="/" component={() => <Login hubConnection={hubConnection} />} ></Route>
+            <Route path="/Main" component={Main}></Route>
+          </Provider>
+        </CookiesProvider>
+      </Switch>
+    </Router>
   );
 }
 

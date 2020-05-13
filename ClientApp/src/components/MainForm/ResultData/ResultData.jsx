@@ -115,7 +115,7 @@ class ResultData extends Component {
     let diff = moment.duration(dateNow.diff(dateTransDate));
     return `${subTransDate} [+${diff._data.minutes}m ${diff._data.seconds}s]`;
   }
-c
+
 
   componentWillUnmount = () => {
     this.hubConnection.stop();
@@ -139,11 +139,13 @@ c
   }
 
   render() {
-    const { resultData } = this.props;
-    if (resultData === 'undefined') {
-      return (<Table columns={tableSchema}></Table>)
+    const { resultData, queryParam } = this.props;
+    if (resultData.length > 0 && 'recordLines' in queryParam) {
+      let lines = queryParam['recordLines'].description.split(' ')[0];
+      let tablePageSize = lines > resultData.length ? resultData.length : lines;
+      return (<Table columns={tableSchema} dataSource={resultData} scroll={{ x: 1800, y: 700 }} rowKey="refNo" pagination={{ pageSize: tablePageSize, hideOnSinglePage: true }}></Table>)
     }
-    return (<Table columns={tableSchema} dataSource={resultData} scroll={{ x: 1800 }} rowKey="refNo"></Table>)
+    return (<Table columns={tableSchema}></Table>)
   }
 }
 
