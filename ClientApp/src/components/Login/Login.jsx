@@ -15,6 +15,7 @@ function Login(props) {
   const [openSpin, setOpenSpin] = useState(false);
 
   const loginOnClick = async () => {
+    setOpenSpin(true);
     hubConnection
       .invoke('UserLogin', {
         ConnectionId: hubConnection.connectionId,
@@ -25,6 +26,7 @@ function Login(props) {
 
     hubConnection
       .on('userLogin', (response) => {
+        setOpenSpin(false);
         if (response.moLoginStatus === 1) {
           setLoginCookie(response);
         }
@@ -86,7 +88,7 @@ function Login(props) {
   return (
     <div className="content">
       <div className="container">
-        <LoadingSpin openSpin={openSpin}></LoadingSpin>
+      <Spin tip='Loading...' size='large' spinning={openSpin}>
         {errorAlert}
         <div className="container-box">
           <Input
@@ -124,17 +126,10 @@ function Login(props) {
               Cancel
             </Button>
         </div>
+        </Spin>
       </div>
     </div>
   );
-}
-
-const LoadingSpin = (props) => {
-  const { openSpin } = props;
-  if(openSpin){
-    return <Spin tip='Loading...'></Spin>;
-  }
-  return <div></div>;
 }
 
 
