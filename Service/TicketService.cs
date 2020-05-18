@@ -23,7 +23,7 @@ namespace stake_place_web.Service
         Dictionary<string, List<StakePlaceTicket>> onConnectUserLastQueryResult { get; set; }
         TicketsQueryParameters GetTicketParameters (TicketRequest request);
         List<StakePlaceTicket> GetTickets (TicketsQueryParameters _ticketsQueryParameters);
-        TicketResponse GetTicketResponse (string conneciontId, List<StakePlaceTicket> tickets);
+        TicketResponse GetTicketResponse (string connectionId, List<StakePlaceTicket> tickets);
     }
 
     public class TicketService : ITicketService
@@ -34,10 +34,10 @@ namespace stake_place_web.Service
         private readonly MiniTicketV2Dao _miniTicketV2Dao;
         private readonly IConfiguration _config;
         private readonly System.Threading.Timer timer;
-        private readonly IHubContext<MainFormResultHub> _hubContext;
+        private readonly IHubContext<TicketConnectionHub> _hubContext;
         private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds (1000);
         private readonly DefaultContractResolver contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () };
-        public TicketService (IConfiguration config, IHubContext<MainFormResultHub> hubContext)
+        public TicketService (IConfiguration config, IHubContext<TicketConnectionHub> hubContext)
         {
             _config = config;
             _hubContext = hubContext;
@@ -50,25 +50,30 @@ namespace stake_place_web.Service
             _miniTicketV2Dao = MiniTicketV2Dao.CreateInstance (connectionString,
                 $"{mongoDbId}@MiniTicketV2Dao@TicketsBll@{APPLICATION_NAME}");
 
-            // timer = new System.Threading.Timer (onTimerHandler, null, BroadcastInterval, BroadcastInterval);
+            timer = new System.Threading.Timer (onTimerHandler, null, BroadcastInterval, BroadcastInterval);
         }
 
         private void onTimerHandler (object state)
         {
             try
-            {
+            {    
+                Console.WriteLine ($"[LOG] onConnectUserParams={onConnectUserParams.Count}");
                 Parallel.ForEach (onConnectUserParams, async item =>
                 {
-                    var conneciontId = item.Key;
+                    var connectionId = item.Key;
                     var queryParams = item.Value;
-                    var response = GetTicketResponse (conneciontId, GetTickets (queryParams));
-                    await _hubContext
-                        .Clients
-                        .Client (conneciontId)
-                        .SendAsync (
-                            "updateResultData",
-                            JsonConvert.SerializeObject (response, new JsonSerializerSettings { ContractResolver = contractResolver })
-                        );
+                    var response = GetTicketResponse (connectionId, GetTickets (queryParams));
+                    Console.WriteLine ($"[LOG] connectionId={connectionId}, new ticket count={response.Added}");
+                    if (response.Added > 0)
+                    {
+                        await _hubContext
+                            .Clients
+                            .Client (connectionId)
+                            .SendAsync (
+                                "updateResultData",
+                                JsonConvert.SerializeObject (response, new JsonSerializerSettings { ContractResolver = contractResolver })
+                            );
+                    }
                 });
             }
             catch (Exception ex) { }
@@ -304,9 +309,9 @@ namespace stake_place_web.Service
             return stakePlaceTickets;
         }
 
-        public TicketResponse GetTicketResponse (string conneciontId, List<StakePlaceTicket> tickets)
+        public TicketResponse GetTicketResponse (string connectionId, List<StakePlaceTicket> tickets)
         {
-            var added = tickets.Except (onConnectUserLastQueryResult[conneciontId]).Count ();
+            var added = tickets.Except (onConnectUserLastQueryResult[connectionId]).Count ();
             return new TicketResponse (added, tickets);
         }
 

@@ -11,7 +11,7 @@ class Main extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            panes: [{ title: 'Tab #1', key: '1' }],
+            panes: [{ title: 'Tab #1', key: 1 }],
             newTabIndex: 1,
             activeKey: '1',
         };
@@ -42,8 +42,8 @@ class Main extends PureComponent {
             title: `Tab #${newActiveKey}`,
             key: newActiveKey,
         });
-        this.setState({ 
-            panes, 
+        this.setState({
+            panes,
             activeKey: newActiveKey.toString(),
             newTabIndex: newActiveKey
         });
@@ -57,7 +57,7 @@ class Main extends PureComponent {
                 lastIndex = i - 1;
             }
         });
-        const panes = this.state.panes.filter((pane) => pane.key !== targetKey);
+        const panes = this.state.panes.filter((pane) => pane.key !== parseInt(targetKey));
         if (panes.length && activeKey === targetKey) {
             if (lastIndex >= 0) {
                 activeKey = panes[lastIndex].key;
@@ -65,6 +65,7 @@ class Main extends PureComponent {
                 activeKey = panes[0].key;
             }
         }
+        activeKey = activeKey.toString();
         this.setState({ panes, activeKey });
     };
 

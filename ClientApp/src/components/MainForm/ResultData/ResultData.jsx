@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import { Table } from 'antd'
 import { connect } from 'react-redux'
 import { setResultData, setQueryParam } from '../../../redux/actions/main/index'
@@ -12,11 +12,11 @@ import moment from 'moment'
 //資料更新方式
 //1. 開啟及條件修改 -> WebApi
 //2. 每秒資料有更改時Server會以WebSocket推送至Client
-class ResultData extends PureComponent {
+class ResultData extends Component {
   constructor(props) {
     super(props);
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('/MainFormResultHub')
+      .withUrl('/TicketConnectionHub')
       .configureLogging(signalR.LogLevel.Information)
       .build();
     this.hubConnection
@@ -37,7 +37,7 @@ class ResultData extends PureComponent {
   //從API取得全部資料
   getResultData = async () => {
     const { queryParam, cookies } = this.props;
-    if (Object.keys(queryParam).length <= 1 || !cookies.get('userLevels')|| !cookies.get('matchCodes')) return;
+    if (Object.keys(queryParam).length <= 1 || !cookies.get('userLevels') || !cookies.get('matchCodes')) return;
     fetch('ticket', {
       method: 'POST',
       headers: {
@@ -67,7 +67,7 @@ class ResultData extends PureComponent {
         latePending: 'None',
         queryTime: ''
       };
-      
+
       //Get Detail Data
       resultDetailData.stocks = stakePlaceTickets.filter(e => e.isStock).length;
       resultDetailData.tradeIns = stakePlaceTickets.filter(e => !e.isStock).length;
@@ -116,6 +116,25 @@ class ResultData extends PureComponent {
     return `${subTransDate} [+${diff._data.minutes}m ${diff._data.seconds}s]`;
   }
 
+  resize = () => this.forceUpdate();
+
+  componentDidMount = () => {
+    window.addEventListener('resize', this.resize);
+  }
+
+  componentDidUpdate = () => {
+    let scroll = document.getElementsByClassName('ant-table-scroll');
+    const { queryParam } = this.props;
+    if (!!!scroll && queryParam.scrollEnd) {
+      // scroll.scrollYTo(0, )
+    }
+  }
+
+  componentWillUnmount = () => {
+    this.hubConnection.stop();
+    window.removeEventListener('resize', this.resize);
+  }
+
 
   reMapParamData = (object) => {
     return Object.keys(object).reduce(
@@ -134,11 +153,15 @@ class ResultData extends PureComponent {
   }
 
   render() {
-    const { resultData } = this.props;
-    if (resultData === 'undefined') {
-      return (<Table columns={tableSchema}></Table>)
+    const { resultData, queryParam } = this.props;
+    let tablePageSize = 0;
+    let screenHeight = document.body.clientHeight - 130;   
+    if (resultData.length > 0 && 'recordLines' in queryParam) {
+      let lines = queryParam['recordLines'].description.split(' ')[0];
+      tablePageSize = lines > resultData.length ? resultData.length : lines;
+      return (<Table columns={tableSchema} dataSource={resultData} scroll={{ x: 1800, y: screenHeight }} size='small' rowKey="refNo" pagination={{ pageSize: tablePageSize, hideOnSinglePage: true }}></Table>)
     }
-    return (<Table columns={tableSchema} dataSource={resultData} scroll={{ x: 1800 }} rowKey="refNo"></Table>)
+    return (<Table columns={tableSchema}  scroll={{ x: 1800, y: screenHeight }} size='small' rowKey="refNo" pagination={{ pageSize: tablePageSize, hideOnSinglePage: true }}></Table>)
   }
 }
 
