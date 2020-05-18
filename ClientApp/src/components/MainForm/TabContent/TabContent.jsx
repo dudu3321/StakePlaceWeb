@@ -15,12 +15,25 @@ class TabContent extends PureComponent {
     }
   }
 
+  resize = () => this.forceUpdate();
+
+  componentDidMount = () => {
+    window.addEventListener('resize', this.resize);
+  }
+
+  componentWillUnmount = () => {
+    window.removeEventListener('resize', this.resize);
+  }
+
   render() {
+    let showFilter = document.body.clientWidth > 900 ? 
+    <div className="tab_content_control">
+      <Filter tabIndex={this.state.tabIndex}></Filter>
+    </div> 
+    : <div></div>;
     return (
       <div>
-        <div className="tab_content_control">
-          <Filter tabIndex={this.state.tabIndex}></Filter>
-        </div>
+        {showFilter}
         <div className="tab_content_control tab_content_Info">
           <Info tabIndex={this.state.tabIndex}></Info>
         </div>

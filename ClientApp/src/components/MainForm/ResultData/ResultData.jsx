@@ -22,11 +22,11 @@ class ResultData extends Component {
     this.hubConnection
       .start()
       .then(() => {
-       console.log('Connection started!');
+        console.log('Connection started!');
         this.connectionId = this.hubConnection.connectionId;
         this.getResultData();
         this.intervalId = setInterval(() => this.intervalEventHandle(), 1000);
-      }) 
+      })
       .catch(err => console.log('Error while establishing connection :('));
     this.hubConnection.on('updateResultData', (result) => {
       console.log('data received!');
@@ -37,7 +37,7 @@ class ResultData extends Component {
   //從API取得全部資料
   getResultData = async () => {
     const { queryParam, cookies } = this.props;
-    if (Object.keys(queryParam).length <= 1 || !cookies.get('userLevels')|| !cookies.get('matchCodes')) return;
+    if (Object.keys(queryParam).length <= 1 || !cookies.get('userLevels') || !cookies.get('matchCodes')) return;
     fetch('ticket', {
       method: 'POST',
       headers: {
@@ -67,7 +67,7 @@ class ResultData extends Component {
         latePending: 'None',
         queryTime: ''
       };
-      
+
       //Get Detail Data
       resultDetailData.stocks = stakePlaceTickets.filter(e => e.isStock).length;
       resultDetailData.tradeIns = stakePlaceTickets.filter(e => !e.isStock).length;
@@ -116,9 +116,23 @@ class ResultData extends Component {
     return `${subTransDate} [+${diff._data.minutes}m ${diff._data.seconds}s]`;
   }
 
+  resize = () => this.forceUpdate();
+
+  componentDidMount = () => {
+    window.addEventListener('resize', this.resize);
+  }
+
+  componentDidUpdate = () => {
+    let scroll = document.getElementsByClassName('ant-table-scroll');
+    const { queryParam } = this.props;
+    if (!!!scroll && queryParam.scrollEnd) {
+      // scroll.scrollYTo(0, )
+    }
+  }
 
   componentWillUnmount = () => {
     this.hubConnection.stop();
+    window.removeEventListener('resize', this.resize);
   }
 
 
@@ -140,12 +154,14 @@ class ResultData extends Component {
 
   render() {
     const { resultData, queryParam } = this.props;
+    let tablePageSize = 0;
+    let screenHeight = document.body.clientHeight - 130;   
     if (resultData.length > 0 && 'recordLines' in queryParam) {
       let lines = queryParam['recordLines'].description.split(' ')[0];
-      let tablePageSize = lines > resultData.length ? resultData.length : lines;
-      return (<Table columns={tableSchema} dataSource={resultData} scroll={{ x: 1800, y: 700 }} rowKey="refNo" pagination={{ pageSize: tablePageSize, hideOnSinglePage: true }}></Table>)
+      tablePageSize = lines > resultData.length ? resultData.length : lines;
+      return (<Table columns={tableSchema} dataSource={resultData} scroll={{ x: 1800, y: screenHeight }} size='small' rowKey="refNo" pagination={{ pageSize: tablePageSize, hideOnSinglePage: true }}></Table>)
     }
-    return (<Table columns={tableSchema}></Table>)
+    return (<Table columns={tableSchema}  scroll={{ x: 1800, y: screenHeight }} size='small' rowKey="refNo" pagination={{ pageSize: tablePageSize, hideOnSinglePage: true }}></Table>)
   }
 }
 
