@@ -155,7 +155,7 @@ class ResultData extends Component {
   render() {
     const { resultData, queryParam } = this.props;
     let tablePageSize = 0;
-    let screenHeight = document.body.clientHeight - 130;   
+    let screenHeight = document.body.clientHeight - 200;   
     if (resultData.length > 0 && 'recordLines' in queryParam) {
       let lines = queryParam['recordLines'].description.split(' ')[0];
       tablePageSize = lines > resultData.length ? resultData.length : lines;
